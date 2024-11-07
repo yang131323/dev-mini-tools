@@ -1,0 +1,12 @@
+{
+  "name": "dev-mini-tool",
+  "version": "1.0.0",
+  "description": "前端日常开发提效小工具",
+  "main": "index.ts",
+  "keywords": ["frontend", "web", "devtool"],
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC"
+}
