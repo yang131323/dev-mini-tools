@@ -26,7 +26,7 @@
       "@router/*": ["src/router/*"],
       "@configs/*": ["src/configs/*"],
       "@const/*": ["src/constants/*"],
-      "@kye/*": ["src/keys/*"],
+      "@key/*": ["src/keys/*"],
     },
     "types": ["vite/client"]
   }

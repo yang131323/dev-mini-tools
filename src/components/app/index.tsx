@@ -1,5 +1,7 @@
 import { defineComponent } from "vue";
 
+import "./index.scss";
+
 const App = defineComponent({
   name: "App",
   setup() {

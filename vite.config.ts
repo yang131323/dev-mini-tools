@@ -2,12 +2,13 @@ import type { UserConfig } from "vite";
 
 import { defineConfig } from "vite";
 import vueJsx from '@vitejs/plugin-vue-jsx'
+import checker from "vite-plugin-checker";
 import path from "node:path";
 import url from "node:url";
 
-const dirname = url.fileURLToPath(import.meta.url);
+const dirname = path.dirname(url.fileURLToPath(import.meta.url));
 
-export default defineConfig(({ mode, command } ) => {
+export default defineConfig(({ command } ) => {
   const isDev = command === 'serve'
 
   if (isDev) {
@@ -40,13 +41,22 @@ function getBaseConfig() {
 function getDevConfig() {
   const baseConf = getBaseConfig();
 
+  const { plugins = [], ...rest } = baseConf;
+
   const devConf: UserConfig = {
-    ...baseConf,
+    ...rest,
     server: {
       port: 8080,
       open: true,
       strictPort: true,
-    }
+    },
+    plugins: [
+      ...plugins,
+      checker({
+        typescript: true,
+        vueTsc: true,
+      }),
+    ],
   }
 
   return devConf;
