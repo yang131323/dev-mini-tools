@@ -1,0 +1,25 @@
+@use "../../style/var.scss" as *;
+
+.page-container {
+  .page-header {
+    display: flex;
+    padding: 0 $commonPadding;
+    height: 48px;
+    line-height: 48px;
+    align-items: center;
+    align-content: center;
+    box-sizing: border-box;
+    border-bottom: $commonBorder;
+    box-shadow: $commonBoxShadow;
+    background-color: $commonBg;
+  }
+
+  .page-title {
+    font-size: 18px;
+  }
+
+  .app-nav {
+    border-bottom: none;
+    margin-left: 20px;
+  }
+}

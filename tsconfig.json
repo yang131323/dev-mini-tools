@@ -23,11 +23,11 @@
       "@components/*": ["src/components/*"],
       "@utils/*": ["src/utils/*"],
       "@store/*": ["src/store/*"],
-      "@router/*": ["src/router/*"],
+      "@router/*": ["src/routes/*"],
       "@configs/*": ["src/configs/*"],
       "@const/*": ["src/constants/*"],
       "@key/*": ["src/keys/*"],
     },
-    "types": ["vite/client"]
+    "types": ["./types/vite-env.d.ts"],
   }
 }

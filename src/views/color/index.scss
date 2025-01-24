@@ -1,0 +1,29 @@
+@use "../../style/mixin.scss" as *;
+@use "../../style/var.scss" as *;
+
+.color-page {
+  margin: $commonPadding 60px 0;
+  padding: $commonPadding;
+  background-color: $commonBg;
+
+  .block-title, .result-title {
+    font-size: 16px;
+    line-height: 1.5;
+  }
+
+  .block-title {
+    margin-bottom: 12px;
+  }
+
+  .result-title {
+    margin: 12px 0;
+  }
+
+  .color-block {
+    @include flex-column;
+  }
+
+  .format-result {
+    display: flex;
+  }
+}

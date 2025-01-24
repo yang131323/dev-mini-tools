@@ -26,7 +26,7 @@ function getBaseConfig() {
         "@components": path.resolve(dirname, "src/components"),
         "@utils": path.resolve(dirname, "src/utils"),
         "@store": path.resolve(dirname, "src/store"),
-        "@router": path.resolve(dirname, "src/router"),
+        "@router": path.resolve(dirname, "src/routes"),
         "@config": path.resolve(dirname, "src/configs"),
         "@const": path.resolve(dirname, "src/constants"),
         "@key": path.resolve(dirname, "src/keys"),
@@ -49,6 +49,9 @@ function getDevConfig() {
       port: 8080,
       open: true,
       strictPort: true,
+    },
+    build: {
+      sourcemap: true,
     },
     plugins: [
       ...plugins,
