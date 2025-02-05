@@ -21,7 +21,9 @@ export default typescriptEslint.config(
         parser: typescriptEslint.parser,
       },
     },
-    rules: {},
+    rules: {
+      "@typescript-eslint/no-explicit-any": "off"
+    },
   },
   eslintConfigPrettier
 );

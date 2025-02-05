@@ -8,6 +8,12 @@ importers:
 
   .:
     dependencies:
+      '@ant-design/icons-vue':
+        specifier: ^7.0.1
+        version: 7.0.1(vue@3.5.12(typescript@5.6.3))
+      '@isq/storage':
+        specifier: ^1.0.2
+        version: 1.0.2
       ant-design-vue:
         specifier: 4.2.6
         version: 4.2.6(vue@3.5.12(typescript@5.6.3))
@@ -540,6 +546,9 @@ packages:
   '@hutson/parse-repository-url@3.0.2':
     resolution: {integrity: sha512-H9XAx3hc0BQHY6l+IFSWHDySypcXsvsuLhgYLUGywmJ5pswRVQJUHpOsobnLYp2ZUaUlKiKDrgWWhosOwAEM8Q==}
     engines: {node: '>=6.9.0'}
+
+  '@isq/storage@1.0.2':
+    resolution: {integrity: sha512-TtkI8SocV9LeYjqcqnUkQtAfbL5eW8bexB7eX+uIsxzM2LxsXKtHUtjlwBgYzn1kYR/3CQngFeb/X4B+CY/GGQ==, tarball: https://registry.npmmirror.com/@isq/storage/-/storage-1.0.2.tgz}
 
   '@jridgewell/gen-mapping@0.3.5':
     resolution: {integrity: sha512-IzL8ZoEDIBRWEzlCcRhOaCupYyN5gdIK+Q6fbFdPDg6HqX6jpkItn7DFIpW9LQzXG6Df9sA7+OKnq0qlz/GaQg==}
@@ -3253,6 +3262,8 @@ snapshots:
   '@humanwhocodes/retry@0.4.0': {}
 
   '@hutson/parse-repository-url@3.0.2': {}
+
+  '@isq/storage@1.0.2': {}
 
   '@jridgewell/gen-mapping@0.3.5':
     dependencies:
