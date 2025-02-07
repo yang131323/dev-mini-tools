@@ -1,4 +1,4 @@
-import { toHex } from "./num";
+import { toHex, digitalDecimal, numToPercentage, percentageStrToNum } from "./num";
 import { isNull } from "./type";
 
 export enum ColorFormat {
@@ -34,6 +34,13 @@ export interface ColorObj {
   hsla?: string;
 }
 
+function isHslColor(arr: string[]) {
+  const [h, s, l] = arr;
+  const isHue = h.endsWith("deg") || h.endsWith("grad") || h.endsWith("rad") || h.endsWith("turn");
+
+  return isHue || s.endsWith("%") || l.endsWith("%") || (s.includes(".") && l.includes("."));
+}
+
 const rgbReg = /,\s*|\s+/g;
 export function getColorFormat(str: string) {
   if (str.startsWith("#")) {
@@ -45,8 +52,10 @@ export function getColorFormat(str: string) {
   } else {
     const arr = str.trim().split(rgbReg);
 
-    if (arr.length === 3 || arr.length === 4) {
-      return arr.length === 3 ? ColorFormat.RGB : ColorFormat.RGBA;
+    if (arr.length === 3) {
+      return isHslColor(arr) ? ColorFormat.HSL : ColorFormat.RGB;
+    } else if (arr.length === 4) {
+      return isHslColor(arr) ? ColorFormat.HSLA : ColorFormat.RGBA;
     }
 
     return ColorFormat.UNKNOWN;
@@ -61,7 +70,7 @@ export function parseColor(str: string) {
   } else if (str.startsWith("hsl")) {
     return parseHslColor(str);
   } else {
-    return parseRgbStrColor(str);
+    return parseStrColor(str);
   }
 }
 
@@ -74,41 +83,69 @@ export function parseHexColor(str: string): RGBColor {
   return { r, g, b };
 }
 
-export function parseRgbStrColor(str: string) {
+export function parseStrColor(str: string) {
   const arr = str.trim().split(rgbReg);
-  if (arr.length !== 3 && arr.length !== 4) return null;
-  const [r, g, b, a] = arr.map((item) => parseInt(item));
-
-  const color: RGBColor = {
-    r,
-    g,
-    b,
-  };
-
-  if (a) color.a = a;
+  const len = arr.length;
+  if (len !== 3 && len !== 4) return null;
+  const isHsl = isHslColor(arr);
+  let color: RGBColor | HSLColor;
+  if (isHsl) {
+    color = parseHslColor(str);
+  } else {
+    color = parseRgbaColor(str);
+  }
+  
+  if (len === 3) delete color.a;
 
   return color;
 }
 
 export function parseRgbaColor(str: string): RGBColor {
   const colorStr = str.replace(/rgba?\(/, "").replace(")", "");
-  const [r, g, b, a = 1] = colorStr.split(/,\s*/).map((item) => parseInt(item));
+  const [r, g, b, a = "1"] = colorStr.split(/,\s*/);
 
-  return { r, g, b, a };
+  return {
+    r: parseFloat(r),
+    g: parseFloat(g),
+    b: parseFloat(b),
+    a: percentageStrToNum(a) / 100,
+  };
 }
 
 export function parseHslColor(str: string): HSLColor {
   const colorStr = str.replace(/hsla?\(/, "").replace(")", "");
   const arr = colorStr.split('/');
-  const a = parseInt(arr[1] ?? "1");
-  const [h, s, l] = colorStr.split(/\s+/).map((item) => parseInt(item));
+  let a = arr[1] ?? "1";
+  const [h, s, l, _a] = colorStr.split(rgbReg);
 
-  return { h, s, l, a };
+  if (_a) a = _a;
+
+  return {
+    h: parseHue(h),
+    s: percentageStrToNum(s),
+    l: percentageStrToNum(l),
+    a: percentageStrToNum(a) / 100,
+  };
 }
 
-export function getColorResult(color: RGBColor | HSLColor): ColorObj {
+export function parseHue(hue: string) {
+  hue = hue.trim();
+  if (hue.endsWith("deg")) {
+    return parseFloat(hue.replace("deg", ""));
+  } else if (hue.endsWith("grad")) {
+    return parseFloat(hue.replace("grad", "")) * 0.9;
+  } else if (hue.endsWith("rad")) {
+    return parseFloat(hue.replace("rad", "")) * 180 / Math.PI;
+  } else if (hue.endsWith("turn")) {
+    return parseFloat(hue.replace("turn", "")) * 360;
+  } else {
+    return parseFloat(hue);
+  }
+}
+
+export function getColorResult(color: RGBColor | HSLColor, decimal: number): ColorObj {
   if ("r" in color) {
-    const hsl = rgbToHslValues(color);
+    const hsl = rgbToHslValues(color, decimal);
 
     return {
       hex: rgbToHex(color),
@@ -118,7 +155,7 @@ export function getColorResult(color: RGBColor | HSLColor): ColorObj {
       hsla: hslToString(hsl, true),
     };
   } else {
-    const rgb = hslToRgb(color);
+    const rgb = hslToRgb(color, decimal);
 
     return {
       hex: rgbToHex(rgb),
@@ -147,19 +184,19 @@ export function rgbToString(color: RGBColor, hasAlpha = false) {
   }
 }
 
-export function rgbToHsl(color: RGBColor, hasAlpha = false) {
-  // const { a } = color;
-  const hsl = rgbToHslValues(color);
+// export function rgbToHsl(color: RGBColor, hasAlpha = false) {
+//   // const { a } = color;
+//   const hsl = rgbToHslValues(color);
   
-  // if (hasAlpha) hsl.a = a ?? 1;
+//   // if (hasAlpha) hsl.a = a ?? 1;
 
-  return hslToString(hsl, hasAlpha);
-}
+//   return hslToString(hsl, hasAlpha);
+// }
 
 /**
  * rgb转换为hsl公式： https://zh.wikipedia.org/wiki/HSL%E5%92%8CHSV%E8%89%B2%E5%BD%A9%E7%A9%BA%E9%97%B4
  */
-export function rgbToHslValues(color: RGBColor): HSLColor {
+export function rgbToHslValues(color: RGBColor, decimal: number): HSLColor {
   const { r, g, b, a = 1 } = color;
   const _r = r / 255;
   const _g = g / 255;
@@ -192,22 +229,22 @@ export function rgbToHslValues(color: RGBColor): HSLColor {
   }
 
   return {
-    h: h * 360,
-    s: s * 100,
-    l: l * 100,
+    h: digitalDecimal(h * 360, decimal),
+    s: digitalDecimal(s * 100, decimal),
+    l: digitalDecimal(l * 100, decimal),
     a
   };
 }
 
 export function hslToString(color: HSLColor, hasAlpha = false) {
   const { h, s, l, a = 1 } = color;
-  const values = [h, s, l];
+  const values = [h, numToPercentage(s), numToPercentage(l)];
   if (!hasAlpha) return `hsl(${values.join(" ")})`;
 
   return `hsl(${values.join(" ")} / ${a})`;
 }
 
-export function hslToRgb(color: HSLColor): RGBColor {
+export function hslToRgb(color: HSLColor, decimal: number): RGBColor {
   const { h, s, l, a = 1 } = color;
   const _h = h / 360;
   const _s = s / 100;
@@ -227,9 +264,9 @@ export function hslToRgb(color: HSLColor): RGBColor {
   }
 
   return {
-    r: r * 255,
-    g: g * 255,
-    b: b * 255,
+    r: digitalDecimal(r * 255, decimal),
+    g: digitalDecimal(g * 255, decimal),
+    b: digitalDecimal(b * 255, decimal),
     a
   };
 }
@@ -252,8 +289,6 @@ export function colorToString(color: ColorType | string) {
   if ("r" in color) {
     return isNull(color.a) ? rgbToString(color) : rgbToString(color, true);
   }
-
-  console.log("hslToString", hslToString(color));
 
   return isNull(color.a) ? hslToString(color) : hslToString(color, true);
 }

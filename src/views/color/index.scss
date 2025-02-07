@@ -3,11 +3,15 @@
 
 .color-page {
   margin: $commonPadding 60px 0;
-  padding: $commonPadding;
-  background-color: $commonBg;
+  // padding: $commonPadding;
+
+  .setting-panel {
+    background-color: #fff;
+    margin-bottom: $commonPadding;
+  }
 
   .block-title, .result-title {
-    font-size: 16px;
+    font-size: 14px;
     line-height: 1.5;
   }
 
@@ -16,7 +20,7 @@
   }
 
   .color-item {
-    @include flex-align-center;
+    display: flex;
   }
 
   .color-copy, .color-value {
@@ -26,15 +30,31 @@
     background-color: rgba(0, 0, 0, 0.02);
   }
 
+  .color-block, .setting-panel, .color-detail {
+    box-shadow: $commonBoxShadow;
+    background-color: $commonBg;
+  }
+
   .color-value {
-    display: inline-block;
     margin-left: 8px;
     border-radius: 4px 0 0 4px;
+    align-self: stretch;
+  }
+
+  .color-value, .color-copy {
+    display: inline-flex;
+    align-items: center;
+  }
+
+  .tip-wrapper {
+    @include flex-align-center;
+  }
+
+  .decimal-input {
+    margin-left: 6px;
   }
 
   .color-copy {
-    display: inline-flex;
-    align-items: center;
     border-radius: 0 4px 4px 0;
     padding: 0 6px;
     align-self: stretch;
@@ -48,7 +68,12 @@
   }
 
   .result-title {
+    font-size: 14px;
     margin: 12px 0;
+  }
+
+  .color-block, .color-detail {
+    padding: $commonPadding;
   }
 
   .color-block {
@@ -62,5 +87,27 @@
   .result-item {
     flex: 1;
     margin-right: 10px;
+  }
+
+  .split-line {
+    height: 1px;
+    background-color: $borderColor;
+    margin-top: 16px;
+  }
+
+  .color-detail {
+    font-size: 14px;
+    margin-top: $commonPadding;
+  }
+
+  .detail-title {
+    font-size: 14px;
+    border-left: 4px solid #409EFF;
+    padding-left: 8px;
+    margin-bottom: 4px;
+  }
+
+  .detail-content {
+    margin-top: 12px;
   }
 }

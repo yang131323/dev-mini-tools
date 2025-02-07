@@ -18,3 +18,19 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
+
+.inline-code {
+  font-size: 12px;
+  line-height: 1.5;
+  display: inline-block;
+  border-radius: 3px;
+  padding: 0 6px;
+  margin: 0 2px;
+  background-color: #E7E9E8;
+}
+
+.common-link {
+  color: #1890ff;
+  text-decoration: none;
+  transition: color 0.5s;
+}
