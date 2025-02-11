@@ -102,7 +102,7 @@ export function parseStrColor(str: string) {
 
 export function parseRgbaColor(str: string): RGBColor {
   const colorStr = str.replace(/rgba?\(/, "").replace(")", "");
-  const [r, g, b, a = "1"] = colorStr.split(/,\s*/);
+  const [r, g, b, a = "1"] = colorStr.split(rgbReg);
 
   return {
     r: parseFloat(r),

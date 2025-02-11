@@ -4,6 +4,7 @@ import { defineComponent, ref } from "vue";
 import { useRouter, RouterView } from "vue-router";
 import { Menu } from "ant-design-vue";
 import { RouteName } from "@/routes";
+import PageFooter from "@/components/footer";
 
 import "./index.scss";
 
@@ -44,7 +45,7 @@ const App = defineComponent({
           <main class="page-content">
             <RouterView />
           </main>
-          <footer class="page-footer"></footer>
+          <PageFooter />
         </div>
       )
     }

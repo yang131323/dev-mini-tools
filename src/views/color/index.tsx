@@ -210,7 +210,7 @@ const ColorPage = defineComponent({
         <div class="color-detail">
           <h3 class="detail-title">工具简介</h3>
           <p class="detail-content">
-            工具输入支持16进制、rgb、rgba、hsl、hsla格式的颜色，会自动识别当前颜色个格式（对应当前颜色部分），然后会以解析出来的颜色为基础计算出其它格式的颜色值。
+            工具输入支持16进制、rgb、rgba、hsl、hsla格式的颜色，会自动识别当前颜色格式（对应当前颜色部分），然后以解析出来的颜色为基础计算出其它格式的颜色。
             <ol class="detail-des">
               <li>rba支持快捷输入，如:<pre class="inline-code">23 56 78</pre>、<pre class="inline-code">23, 56, 78, 0.1</pre>，这两种格式都能识别</li>
               <li> hsl支持快捷输入，如:<pre class="inline-code">23 56% 78%</pre>、<pre class="inline-code">23, 56%, 78%, 0.1</pre>，这两种格式都能识别；<strong class="detail-tip">需要注意的是因为同时支持RGB、HSL格式快捷识别，但两种格式有一定相似性，如果没法找到HSL特殊标识，如H没有带deg、grad、rad、turn等角度标志，S、L没有带上<pre class="inline-code">%</pre>，可能会将HSL错误识别为RGB</strong></li>

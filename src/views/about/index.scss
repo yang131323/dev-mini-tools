@@ -1,0 +1,29 @@
+@use "../../style/var.scss" as *;
+
+$h1Margin: 16px;
+$h2Margin: 14px;
+$h3Margin: 12px;
+$commonMargin: 10px;
+
+.about-tool {
+  margin: 20px 80px;
+  padding: $commonPadding;
+  border-radius: 6px;
+  background-color: $commonBg;
+  box-shadow: $commonBoxShadow;
+
+  .article-h3 {
+    margin-top: $h3Margin;
+  }
+
+  .article-p {
+    margin-top: $commonMargin;
+  }
+
+  .article-ol {
+    margin-top: $commonMargin;
+    list-style: decimal;
+    padding-left: $commonPadding;
+    margin-left: $commonPadding;
+  }
+}

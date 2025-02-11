@@ -110,4 +110,10 @@
   .detail-content {
     margin-top: 12px;
   }
+
+  .detail-des {
+    margin-left: $commonPadding;
+    padding-left: $commonPadding;
+    list-style: decimal;
+  }
 }

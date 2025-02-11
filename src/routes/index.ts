@@ -23,6 +23,11 @@ const routes: RouteRecordRaw[] = [
     path: "/image",
     component: () => import("@/views/image-conversion"),
   },
+  {
+    name: ROUTE.ABOUT_PAGE,
+    path: "/about",
+    component: () => import("@/views/about"),
+  },
   ...BaseRoutes,
 ];
 
