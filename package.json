@@ -1,7 +1,7 @@
 {
   "name": "dev-mini-tool",
   "version": "1.0.0",
-  "description": "前端日常开发提效小工具",
+  "description": "web提效小工具",
   "main": "index.ts",
   "type": "module",
   "keywords": [

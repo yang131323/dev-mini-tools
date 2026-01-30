@@ -1,0 +1,27 @@
+---
+description: 项目层：项目介绍、目录规范、Vite 配置
+globs: *
+---
+# 项目规范 (Project)
+
+## 项目介绍
+- **名称**: Web 提效小工具 (dev-mini-tool)
+- **定位**: Web提效工具集。
+- **核心功能**: 颜色快速转换、SVG 转 CSS、数据图表生成、文档转 PDF、图片加水印等。
+
+## 目录结构规范
+- `src/views/`: 页面级组件。
+- `src/components/`: 公共 UI 组件。
+- `src/utils/`: 工具函数。
+- `src/constants/`: 常量定义。
+- `src/style/`: 全局样式与变量。
+- **组织模式**: 强制使用 `文件夹/index.tsx` + `index.scss` 模式。
+
+## 命名规范
+- **文件夹**: 小写中划线 (kebab-case)，如 `color-block/`。
+- **组件名**: 大驼峰 (PascalCase)，如 `ColorBlock`。
+- **文件名**: 除 `index.tsx/scss` 外，使用小写中划线。
+
+## Vite 配置与别名
+- 强制使用路径别名：`@components`, `@utils`, `@router`, `@const`, `@`。
+- 禁止使用深度超过 2 层的相对路径（如 `../../../../utils`）。

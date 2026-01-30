@@ -1,0 +1,25 @@
+---
+description: 技术层：Sass/CSS 样式规范
+globs: **/*.{scss,css}
+---
+# 样式规范
+
+## 命名
+- 遵循 **BEM** (Block Element Modifier) 命名法。
+- 避免层级嵌套过深（不超过 3 层）。
+
+## 变量与复用
+- 强制引入 `src/style/var.scss` 使用全局变量。
+- 禁止在组件样式中硬编码颜色值或间距数值。
+
+## 示例
+```scss
+@import "@/style/var.scss";
+
+.color-block {
+  background-color: $primary-color;
+  &__item {
+    padding: $spacing-md;
+  }
+}
+```

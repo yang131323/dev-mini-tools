@@ -1,0 +1,13 @@
+---
+description: 技术层：TypeScript 规范
+globs: **/*.ts
+---
+# TypeScript 规范
+
+## 类型定义
+- 优先使用 `interface` 定义对象结构，`type` 定义联合类型或交叉类型。
+- 导出所有公共接口/类型。
+
+## 模块化
+- 严禁使用 `export default` 导出工具函数，统一使用具名导出。
+- 保持模块职责单一。

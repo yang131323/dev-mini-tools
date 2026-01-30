@@ -1,0 +1,23 @@
+---
+description: 技术层：TSX/JSX 最佳实践
+globs: **/*.{tsx,jsx}
+---
+# TSX 规范
+
+## 组件定义
+- 必须使用 `defineComponent` 定义 Vue 组件。
+- 强制使用 `setup` 函数模式。
+
+## 渲染逻辑
+- 逻辑判断：使用三元运算符或 `&&` 替代 `v-if`。
+- 列表渲染：使用 `.map()` 替代 `v-for`。
+- 插槽：使用 `slots.default?.()`。
+
+## 示例
+```tsx
+export default defineComponent({
+  setup(props, { slots }) {
+    return () => <div class="wrapper">{slots.default?.()}</div>;
+  }
+});
+```
