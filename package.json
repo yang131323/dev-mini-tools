@@ -1,7 +1,7 @@
 {
   "name": "dev-mini-tool",
   "version": "1.0.0",
-  "description": "web提效小工具",
+  "description": "Web效率工具",
   "main": "index.ts",
   "type": "module",
   "keywords": [

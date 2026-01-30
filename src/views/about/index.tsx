@@ -13,14 +13,29 @@ const AboutTool = defineComponent({
 
       return (
         <div class="about-tool">
-          <h1 class="first-title">关于前端开发工具</h1>
+          <h1 class="first-title">关于Web效率工具</h1>
+          <p class="article-p">Web效率工具目的是为了解决生活中的一些痛点和难点，旨在提升个人的工作效率和生活便利。</p>
+          <p class="article-p">目前Web效率工具规划类目如下：</p>
+          <ol class="article-ol">
+            <li class="list-item">开发工具</li>
+            <li class="list-item">生活工具</li>
+            <li class="list-item">更多类目...</li>
+          </ol>
           <p class="article-p">前端开发工具是将在开发工作中频繁用到的工具进行一个汇总，提高日常开发效率，如颜色互转、图片转换、编码转换、进制转换</p>
           <h3 class="article-h3">实现工具</h3>
-          <ol class="article-ol">
+          <ul class="article-ul">
+            <li class="list-item">
+              开发工具：
+              <ol class="article-ol">
             <li class="list-item">
               <a class="common-link" href={colorRoute}>颜色/Color转换</a>
             </li>
           </ol>
+            </li>
+            <li class="list-item">
+              生活工具：无
+            </li>
+          </ul>
           <h3 class="article-h3">TODO LIST</h3>
           <ol class="article-ol">
             <li class="list-item">图片转换</li>

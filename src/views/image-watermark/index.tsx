@@ -1,6 +1,6 @@
 import { defineComponent, ref, computed, watch } from 'vue';
 import { Button, Upload, Input, Slider, Select, Switch, Modal, message } from 'ant-design-vue';
-import { InboxOutlined, LeftOutlined, RightOutlined } from '@ant-design/icons-vue';
+import { InboxOutlined, LeftOutlined, RightOutlined, ToTopOutlined } from '@ant-design/icons-vue';
 import { useWatermark, type WatermarkConfig } from './hooks/useWatermark';
 import { BEM } from '@/utils/common';
 
@@ -112,8 +112,7 @@ export default defineComponent({
     return () => (
       <div class={ns.b()}>
         <header class={ns.e('header')}>
-          <div class={ns.e('header-title')}>图片加水印工具</div>
-          <Button type="primary" onClick={() => isExportModalVisible.value = true}>立即导出图片</Button>
+          <Button class={ns.e('header-export')} icon={<ToTopOutlined />} type="primary" onClick={() => isExportModalVisible.value = true}>导出</Button>
         </header>
 
         <main class={ns.e('container')}>
@@ -143,6 +142,7 @@ export default defineComponent({
               </>
             ) : (
               <Upload.Dragger
+                class={ns.e('sider-upload')}
                 multiple
                 accept="image/*"
                 beforeUpload={(file) => {

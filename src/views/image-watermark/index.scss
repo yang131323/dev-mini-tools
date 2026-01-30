@@ -1,4 +1,5 @@
 @use "@/style/var.scss" as *;
+@use "@/style/mixin.scss" as *;
 
 .image-watermark {
   display: flex;
@@ -11,7 +12,7 @@
     padding: 0 24px;
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    justify-content: flex-end;
     background-color: #fff;
     border-bottom: 1px solid #f0f0f0;
     flex-shrink: 0;
@@ -20,6 +21,10 @@
       font-size: 18px;
       font-weight: 600;
       color: $primaryColor;
+    }
+
+    &-export {
+      @include inline-flex-align-center;
     }
   }
 
@@ -78,6 +83,10 @@
         margin-bottom: 12px;
         color: #333;
       }
+    }
+
+    &-upload {
+      padding: 0 $commonPadding;
     }
   }
 }
