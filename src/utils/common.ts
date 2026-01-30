@@ -1,6 +1,50 @@
 import { message } from "ant-design-vue";
 
 const copyStatus = new Set<string>();
+
+/**
+ * BEM 规范管理器
+ */
+export class BEM {
+  private readonly block: string;
+
+  constructor(block: string) {
+    this.block = block;
+  }
+
+  /**
+   * 生成 Block 类名: `block`
+   */
+  b(): string {
+    return this.block;
+  }
+
+  /**
+   * 生成 Element 类名: `block__element`
+   * @param element 元素名
+   */
+  e(element: string): string {
+    return `${this.block}__${element}`;
+  }
+
+  /**
+   * 生成 Modifier 类名: `block--modifier`
+   * @param modifier 修饰符
+   */
+  m(modifier: string): string {
+    return `${this.block}--${modifier}`;
+  }
+
+  /**
+   * 生成 Element Modifier 类名: `block__element--modifier`
+   * @param element 元素名
+   * @param modifier 修饰符
+   */
+  em(element: string, modifier: string): string {
+    return `${this.e(element)}--${modifier}`;
+  }
+}
+
 export function copyText(text: string) {
   return new Promise((resolve) => {
     if (copyStatus.has(text)) return resolve(1);

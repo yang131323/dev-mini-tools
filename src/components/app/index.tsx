@@ -25,6 +25,7 @@ const App = defineComponent({
     const items = [
       createItem(RouteName.COLOR_PAGE, "颜色/Color转换"),
       createItem(RouteName.IMAGE_PAGE, "图片转换"),
+      createItem(RouteName.WATERMARK_PAGE, "图片水印"),
     ];
 
     function menuClickHandler({ key }: MenuInfo) {

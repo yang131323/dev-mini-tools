@@ -7,3 +7,4 @@ export const IMAGE_PAGE = "image";
 export const SVG_PAGE = "svgImage";
 
 export const ABOUT_PAGE = "about";
+export const WATERMARK_PAGE = "watermark";

@@ -28,6 +28,11 @@ const routes: RouteRecordRaw[] = [
     path: "/about",
     component: () => import("@/views/about"),
   },
+  {
+    name: ROUTE.WATERMARK_PAGE,
+    path: "/watermark",
+    component: () => import("@/views/image-watermark"),
+  },
   ...BaseRoutes,
 ];
 

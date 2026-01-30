@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://static.futuoa.com/fservice_frontend/css/chunk-antd.c3edc512.css" rel="stylesheet">
+  <title>Shadow测试</title>
+  <style>
+    p {
+      color: red;
+      font-size: 14px;
+      font-weight: bold;
+    }
+
+    div {
+      color: green;
+      font-size: 14px;
+    }
+
+    h3 {
+      color: blue;
+      font-size: 16px;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <div class="normal-dom-tree">
+    <h3>正常DOM树结构</h3>
+    <p>正常段落</p>
+    <div>正常div</div>
+  </div>
+  <div class="shadow-dom"></div>
+  <template type="text/template" id="shadom-dom-tree">
+    <h3 class="h3">Shadow DOM树结构</h3>
+    <p class="p">Shadow段落</p>
+    <div>Shadow div</div>
+  </template>
+  <script>
+    const shadowHost = document.querySelector('.shadow-dom');
+    const template = document.querySelector('#shadom-dom-tree');
+    const shadowRoot = shadowHost.attachShadow({ mode: 'open' });
+
+    shadowRoot.appendChild(template.content.cloneNode(true));
+
+    const cssStyleSheet = new CSSStyleSheet();
+    cssStyleSheet.replaceSync(`
+      p, div, h3 {
+        font-size: 14px;
+      }
+      h3 {
+        font-weight: bold;
+      }
+    `);
+    shadowRoot.adoptedStyleSheets = [cssStyleSheet];
+  </script>
+</body>
+</html>
