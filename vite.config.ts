@@ -71,6 +71,7 @@ function getProdConfig() {
   const prodConf: UserConfig = {
     ...baseConf,
     build: {
+      outDir: 'site',
       sourcemap: true,
       minify: "terser",
       terserOptions: {
