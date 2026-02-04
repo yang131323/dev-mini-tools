@@ -56,6 +56,6 @@ deploy:
     runs-on: ubuntu-latest
     needs: build
     steps:
-      - name: name: Web效率工具
+      - name: Web效率工具
         id: deployment
         uses: actions/deploy-pages@v4
