@@ -1,0 +1,61 @@
+# This is a basic workflow to help you get started with Actions
+
+name: Deploy Web Tools Site
+
+env: 
+  HEAD_COMMIT: ${{ github.event.head_commit }}
+
+run-name: 【${{ HEAD_COMMIT.committer }}】 ${{ HEAD_COMMIT.timestamp }} [${{ github.event_name }}] ${{ HEAD_COMMIT.message }}
+
+# Controls when the workflow will run
+on:
+  # Triggers the workflow on push or pull request events but only for the "master" branch
+  push:
+    branches: [ "master" ]
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  # This workflow contains a single job called "build"
+  build:
+    # build and deploy site
+    name: 编译和上传
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v6
+        with:
+          ref: master
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22.18.0
+          cache: pnpm
+
+      # 检测环境
+      - name: 环境信息检测
+        run: node -v
+        run: corepack enable pnpm
+        run: pnpm -v
+        run: pnpm ci
+
+      - name: 编译站点
+        run: pnpm run build
+
+      - name: 上传静态资源到Pages
+        id: deployment
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: site/
+deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: name: Web效率工具
+        id: deployment
+        uses: actions/deploy-pages@v4
