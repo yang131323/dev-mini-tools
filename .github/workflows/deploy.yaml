@@ -2,10 +2,10 @@
 
 name: Deploy Web Tools Site
 
-env: 
-  HEAD_COMMIT: ${{ github.event.head_commit }}
+# env: 
+#   HEAD_COMMIT: ${{ github.event.head_commit }}
 
-run-name: 【${{ HEAD_COMMIT.committer }}】 ${{ HEAD_COMMIT.timestamp }} [${{ github.event_name }}] ${{ HEAD_COMMIT.message }}
+run-name: 【${{ github.event.head_commit.committer }}】 ${{ github.event.head_commit.timestamp }} [${{ github.event_name }}] ${{ github.event.head_commit.message }}
 
 # Controls when the workflow will run
 on:
