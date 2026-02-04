@@ -36,10 +36,11 @@ jobs:
 
       # 检测环境
       - name: 环境信息检测
-        run: node -v
-        run: corepack enable pnpm
-        run: pnpm -v
-        run: pnpm ci
+        run: |
+          node -v
+          corepack enable pnpm
+          pnpm -v
+          pnpm ci
 
       - name: 编译站点
         run: pnpm run build
