@@ -70,6 +70,7 @@ function getProdConfig() {
 
   const prodConf: UserConfig = {
     ...baseConf,
+    base: './',
     build: {
       outDir: 'site',
       sourcemap: true,
