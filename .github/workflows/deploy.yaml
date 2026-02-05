@@ -55,9 +55,9 @@ jobs:
       #  with:
       #    path: site/
 
-      - name: Web效率工具
+      - name: 部署Web效率工具
         id: deployment
-        uses: actions/deploy-pages@v4
+        uses: peaceiris/actions-gh-pages@v4
         with: 
           deploy_key: ${{ secrets.ACTIONS_DEPLOY_KEY }}
           publish_dir: ./site
