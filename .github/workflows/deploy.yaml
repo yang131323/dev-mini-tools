@@ -49,18 +49,18 @@ jobs:
       - name: 编译站点
         run: pnpm run build
 
-      # - name: 上传静态资源到Pages
-      #  id: deployment
-      #  uses: actions/upload-pages-artifact@v3
-      #  with:
-      #    path: site/
-
-      - name: 部署Web效率工具
+      - name: 上传静态资源到Pages
         id: deployment
-        uses: peaceiris/actions-gh-pages@v4
-        with: 
-          deploy_key: ${{ secrets.ACTION_DEPLOY_KEY }}
-          publish_dir: ./site
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: site/
+
+      # - name: 部署Web效率工具
+      #   id: deployment
+      #   uses: peaceiris/actions-gh-pages@v4
+      #   with: 
+      #     deploy_key: ${{ secrets.ACTION_DEPLOY_KEY }}
+      #     publish_dir: ./site
 
   # deploy:
   #     environment:
@@ -74,4 +74,22 @@ jobs:
   #         uses: actions/deploy-pages@v4
   #         with: 
   #           deploy_key: ${{ secrets.ACTIONS_DEPLOY_KEY }}
-            
+  
+  # Deployment job
+  deploy:
+    name: 部署站点
+    needs: build
+
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    permissions:
+      pages: write
+      id-token: write
+
+    runs-on: ubuntu-latest
+    steps:
+      - name: 部署
+        id: deployment
+        uses: actions/deploy-pages@v4
