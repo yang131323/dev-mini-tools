@@ -59,7 +59,7 @@ jobs:
         id: deployment
         uses: peaceiris/actions-gh-pages@v4
         with: 
-          deploy_key: ${{ secrets.ACTIONS_DEPLOY_KEY }}
+          deploy_key: ${{ secrets.ACTION_DEPLOY_KEY }}
           publish_dir: ./site
 
   # deploy:
