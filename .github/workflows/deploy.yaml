@@ -49,18 +49,29 @@ jobs:
       - name: 编译站点
         run: pnpm run build
 
-      - name: 上传静态资源到Pages
+      # - name: 上传静态资源到Pages
+      #  id: deployment
+      #  uses: actions/upload-pages-artifact@v3
+      #  with:
+      #    path: site/
+
+      - name: Web效率工具
         id: deployment
-        uses: actions/upload-pages-artifact@v3
-        with:
-          path: site/
-  deploy:
-      environment:
-        name: github-pages
-        url: ${{ steps.deployment.outputs.page_url }}
-      runs-on: ubuntu-latest
-      needs: build
-      steps:
-        - name: Web效率工具
-          id: deployment
-          uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@v4
+        with: 
+          deploy_key: ${{ secrets.ACTIONS_DEPLOY_KEY }}
+          publish_dir: ./site
+
+  # deploy:
+  #     environment:
+  #     name: github-pages
+  #     url: ${{ steps.deployment.outputs.page_url }}
+  #     runs-on: ubuntu-latest
+  #     needs: build
+  #     steps:
+  #       - name: Web效率工具
+  #         id: deployment
+  #         uses: actions/deploy-pages@v4
+  #         with: 
+  #           deploy_key: ${{ secrets.ACTIONS_DEPLOY_KEY }}
+            
