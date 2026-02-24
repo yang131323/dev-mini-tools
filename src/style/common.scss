@@ -5,11 +5,16 @@
   margin: 0;
 }
 
+html,
+body {
+  height: 100%;
+}
+
 body {
   min-height: 100vh;
   overflow: hidden;
   transition: color 0.5s, background-color 0.5s;
-  background-color: #F8FAFB;
+  background-color: #f8fafb;
   line-height: 1.6;
   font-family: Airal, "Microsoft YaHei", "微软雅黑", Inter, -apple-system,
     BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell,
@@ -19,6 +24,16 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+#app {
+  height: 100vh;
+}
+
+ul,
+ol {
+  padding: 0;
+  list-style: none;
+}
+
 .inline-code {
   font-size: 12px;
   line-height: 1.5;
@@ -26,16 +41,11 @@ body {
   border-radius: 3px;
   padding: 0 6px;
   margin: 0 2px;
-  background-color: #E7E9E8;
+  background-color: #e7e9e8;
 }
 
 .common-link {
   color: #1890ff;
   text-decoration: none;
   transition: color 0.5s;
-}
-
-ul, ol {
-  padding: 0;
-  list-style: none;
 }

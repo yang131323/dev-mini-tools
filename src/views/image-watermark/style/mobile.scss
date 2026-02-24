@@ -1,0 +1,14 @@
+@use "@/style/var.scss" as *;
+
+.image-watermark {
+  &__container {
+    flex-direction: column;
+  }
+
+  &__sider {
+    width: 100%;
+    border-left: 0;
+    border-top: 1px solid #f0f0f0;
+  }
+}
+

@@ -4,11 +4,12 @@
 
 ## 文档模块列表
 
-| 模块名称 | 文档路径 | 精简介绍 |
-| :--- | :--- | :--- |
-| **架构深度解析** | [`architecture.md`](./architecture.md) | 详细说明项目技术栈、路由配置、数据流（Storage）及构建逻辑。 |
-| **组件开发指南** | [`component-guide.md`](./component-guide.md) | 提供 TSX 组件标准模板，说明样式引入、Props 校验及生命周期使用。 |
-| **工具与常量手册** | [`utils-library.md`](./utils-library.md) | 列出项目中已有的 Utils（颜色、数值等）和 Constants，避免重复实现。 |
+| 模块名称           | 文档路径                                     | 精简介绍                                                           |
+| :----------------- | :------------------------------------------- | :----------------------------------------------------------------- |
+| **架构深度解析**   | [`architecture.md`](./architecture.md)       | 详细说明项目技术栈、路由配置、数据流（Storage）及构建逻辑。        |
+| **组件开发指南**   | [`component-guide.md`](./component-guide.md) | 提供 TSX 组件标准模板，说明样式引入、Props 校验及生命周期使用。    |
+| **工具与常量手册** | [`utils-library.md`](./utils-library.md)     | 列出项目中已有的 Utils（颜色、数值等）和 Constants，避免重复实现。 |
+| **流程层规则**     | [`process-flow.md`](./process-flow.md)       | 归纳 Store 状态管理等关键流程的组织方式与规范。                    |
 
 ## 使用规则
 

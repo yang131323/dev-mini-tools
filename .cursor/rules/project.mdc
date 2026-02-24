@@ -2,14 +2,57 @@
 description: 项目层：项目介绍、目录规范、Vite 配置
 globs: *
 ---
+
 # 项目规范 (Project)
 
 ## 项目介绍
+
 - **名称**: Web 提效小工具 (dev-mini-tool)
 - **定位**: Web提效工具集：包括但不限于开发工具、生活工具。
 - **核心功能**: 颜色快速转换、SVG 转 CSS、数据图表生成、文档转 PDF、图片加水印等。
 
+## 编码规范
+
+### 代码风格
+
+- **缩进**: 使用2个空格，不使用Tab
+- **行尾**: 使用LF换行符
+- **字符串**: 优先使用单引号，模板字符串使用反引号
+- **分号**: 使用分号风格
+- **命名**: 只允许字符、数字、下划线，使用camelCase命名变量和函数，PascalCase命名类和组件，使用UPPER_CASE命名常量；命名需要指明其含义，需要做到见名知意
+- **单文件长度**: 不超过2000行，超过进行原子化拆分
+- **注释**: 使用jsdoc风格样式
+
+#### 基础要求
+
+- 使用Symbol时必须带描述，如：`new Symbol('STATUS')`
+- 不使用var声明变量，不会发生变化的变量使用const声明，会发生变化的变量使用let声明；每个变量单独一行代码声明 / 赋值，不得连续赋值；如推荐：`let a = 1 + 1`，不推荐：`let a = 1, b = 2`
+- 运算符前后使用一个空格隔开，如`sum = num1 + num2`
+- `if` / `for`等语句中的`()`、`;`、`{}`等使用一个空格隔开，如`if ( a > b ) { }`、`for ( var i = 0; i < count; i++ ) { }`
+- 每个Switch分支另起一行，必须有default分支
+- 使用class组织相关性代码，不使用构造函数；异常类必须以Error结束
+- 布尔值变量以is、can、has、should等开头，如isHidden、canCancel
+- 对于新增、更新、删除、查询（单个）、查询（多个）、统计使用addXx、delXx、updateXx、getXx、getXxList、countXx格式
+- 采用“悬挂式”大括号，即大括号前不允许换行符存在
+- 多行`if`、`else`、`for`、`while`等语句必须用大括号包裹
+- 优先使用常量数字，多个文件共用的常量提取到共同的第一个父级创建一个const.ts文件
+- `if`嵌套不得超过4层，`for`嵌套不得超过3层，`switch`嵌套不得超过2层等，避免出现嵌套太深，影响可读性；出现该场景时，优先进行原子化拆分
+- 当出现复杂的行代码时，优先进行原子化拆分，其次用小括号来限定组，提高代码可读性
+- 捕获异常后，如果确定业务上无需处理该异常，注明不处理的原因
+- 应使用预先检查，而不是通过catch处理代码异常
+
+#### 函数
+
+- 公共函数使用显式返回类型，非公共函数返回类型优先依赖typescript的类型推断
+- 回调优先使用箭头函数，非回调优先使用`function`声明，不推荐使用变量定义函数，如推荐：`function fnName() {}`，不推荐：`const fnName = () => {}`
+- 函数/方法以动词或动词短语命名，如getAnimalName、postData、doSwitch
+- 复杂类型场景使用函数重载
+- 优先使用 async/await 而非 Promise
+- 单个函数不得超过100行，超过进行原子化拆分
+- 函数参数不得多于5个，如果多于5个，根据场景拆分/提取/使用对象参数
+
 ## 目录结构规范
+
 - `src/views/`: 页面级组件。
 - `src/components/`: 公共 UI 组件。
 - `src/utils/`: 工具函数。
@@ -18,10 +61,56 @@ globs: *
 - **组织模式**: 强制使用 `文件夹/index.tsx` + `index.scss` 模式。
 
 ## 命名规范
+
 - **文件夹**: 小写中划线 (kebab-case)，如 `color-block/`。
 - **组件名**: 大驼峰 (PascalCase)，如 `ColorBlock`。
 - **文件名**: 除 `index.tsx/scss` 外，使用小写中划线。
 
 ## Vite 配置与别名
-- 强制使用路径别名：`@components`, `@utils`, `@router`, `@const`, `@`。
+
+- 已配置路径别名（与 `vite.config.ts` 保持一致）：
+  - `@` -> `src/`
+  - `@components` -> `src/components/`
+  - `@utils` -> `src/utils/`
+  - `@store` -> `src/store/`
+  - `@router` -> `src/routes/`
+  - `@const` -> `src/constants/`
+  - `@config` -> `src/configs/`（当前目录不存在，创建后再使用或同步调整别名配置）
+  - `@key` -> `src/keys/`（当前目录不存在，创建后再使用或同步调整别名配置）
 - 禁止使用深度超过 2 层的相对路径（如 `../../../../utils`）。
+
+在使用绝对路径引用项目文件时，优先使用更精确的别名路径，示例如下：
+
+```typescript
+// 优先使用这种
+import * as moduleA '@router/router-name/moduleA'
+
+// 不存在更精确的别名时再回退到这种方式
+import * as moduleA '@/router/router-name/moduleA'
+```
+
+## 文件命名规范
+
+- **组件文件**: jsx语法使用文件夹组织组件，文件夹使用使用kebab-case，组件入口为`index.tsx`
+- **页面文件**: jsx语法使用文件夹组织组件，文件夹使用使用kebab-case，组件入口为`index.tsx`
+- **工具文件**: 使用camelCase，如`httpClient.ts`
+- **常量文件**: 使用camelCase，如`rateLimit.ts`
+- **类型文件**: 使用camelCase，如`global.d.ts`
+
+## 导入路径规范
+
+- **绝对路径**: 充分使用路径别名导入项目文件
+- **相对路径**: 同级或子级（不超过2层）文件使用相对路径
+- **第三方库**: 直接使用包名导入
+- **类型导入**: 使用`import type`导入类型，同一个模块类型引入和实际依赖引入不能共存，需要分为两行引入，同时在组织导入时类型和实际依赖进行分块，类型导入在前，依赖依赖导入再后，中间空一行
+
+##编码规范
+
+- 响应式状态：相关性对象优先使用reactive、基础数据类型使用ref
+- 响应式状态访问优先使用vue提供的`unref`工具函数，推荐`unref(stateRef)`，不推荐`stateRef.value`，在v-model（双向数据绑定）时例外必须使用`stateRef.value`
+- 在编写组件样式时，如`src/assets/styles/`目录下存在定义的内容时，优先使用，项目级通用的scss按照功能放在该目录
+- 目录入口规范，单个模块使用`export * from './module'`格式进行重导出，不推荐一个一个进行导出
+
+## 帮助文档
+
+- 项目相关的帮助文档位于`.cursor/docs/`目录，`.cursor/docs/README.md`是帮助文档的“索引表”，可以从该文档根据问题类型确定要访问的文档；如果有文档能提供解决方案，直接采用文档中的方案

@@ -1,25 +1,64 @@
 @use "../../style/var.scss" as *;
+@use "../../style/mixin.scss" as *;
+
 
 .page-container {
+  height: 100%;
+
   .page-header {
     display: flex;
     padding: 0 $commonPadding;
-    height: 48px;
-    line-height: 48px;
+    height: $pageHeaderHeight;
+    line-height: $pageHeaderHeight;
     align-items: center;
     align-content: center;
     box-sizing: border-box;
     border-bottom: $commonBorder;
     box-shadow: $commonBoxShadow;
     background-color: $commonBg;
+
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+
+    justify-content: space-between;
   }
 
   .page-title {
     font-size: 18px;
   }
 
+  .header-left,
+  .header-right {
+    display: flex;
+    align-items: center;
+    align-content: center;
+  }
+
+  .header-right {
+    @include inline-flex-align-center;
+  }
+
   .app-nav {
     border-bottom: none;
     margin-left: 20px;
+  }
+
+  .app-nav--mobile {
+    display: none;
+  }
+
+  .page-content {
+    box-sizing: border-box;
+    position: fixed;
+    top: $pageHeaderHeight;
+    bottom: $pageFooterHeight;
+    left: 0;
+    right: 0;
+    overflow-y: auto;
+    overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;
   }
 }

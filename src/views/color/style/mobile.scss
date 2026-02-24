@@ -1,0 +1,17 @@
+@use "@/style/var.scss" as *;
+@use "@/style/var.scss" as *;
+
+.mobile-platform {
+  .color-page {
+    margin: $commonPadding $commonPadding 0;
+
+    .format-result {
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .result-item {
+      margin-right: 0;
+    }
+  }
+}

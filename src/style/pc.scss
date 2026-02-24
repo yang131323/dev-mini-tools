@@ -1,0 +1,10 @@
+// PC 端样式覆盖（>= 768px）
+
+@use "@/components/app/style/pc.scss" as appPc;
+@use "@/components/footer/style/pc.scss" as footerPc;
+
+@use "@/views/color/style/pc.scss" as colorPc;
+@use "@/views/about/style/pc.scss" as aboutPc;
+@use "@/views/image-watermark/style/pc.scss" as watermarkPc;
+
+// NOTE: 保证该入口在 build 时一定产出独立 CSS 文件（即使暂无 PC 覆盖规则）。

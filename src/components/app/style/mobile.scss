@@ -1,0 +1,22 @@
+/* App（Header/Nav）移动端独有样式（< 768px） */
+@use "@/style/mixin.scss" as *;
+
+.mobile-platform.page-container {
+  .app-nav--pc {
+    display: none;
+  }
+
+  .app-nav--mobile {
+    @include inline-flex-align-center;
+    justify-content: center;
+    box-sizing: border-box;
+  }
+
+  .page-header {
+    padding: 0 12px;
+  }
+
+  .page-title {
+    font-size: 16px;
+  }
+}
