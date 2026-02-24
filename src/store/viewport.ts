@@ -1,4 +1,5 @@
 import { debounce } from "lodash-es";
+import { defineStore } from "pinia";
 import { markRaw, ref } from "vue";
 
 export interface ViewportSize {
@@ -8,7 +9,7 @@ export interface ViewportSize {
 
 type CleanupFn = () => void;
 
-export function useViewportStore() {
+export const useViewportStore = defineStore("viewport", () => {
   const viewport = ref<ViewportSize>({ width: 0, height: 0 });
   const version = ref(0);
 
@@ -79,4 +80,4 @@ export function useViewportStore() {
     version,
     mountViewportListener,
   };
-}
+});

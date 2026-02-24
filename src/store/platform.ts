@@ -1,12 +1,16 @@
 import { computed, ref, unref } from "vue";
+import { defineStore } from "pinia";
 
 export enum Platform {
   PC = "pc",
   MOBILE = "mobile",
 }
 
-export function usePlatformStore() {
+export const usePlatformStore = defineStore("platform", () => {
   const currentPlat = ref<Platform>(Platform.PC);
+
+  const isMobile = computed(() => unref(currentPlat) === Platform.MOBILE);
+  const isPc = computed(() => unref(currentPlat) === Platform.PC);
 
   function setCurrentPlat(plat: Platform) {
     currentPlat.value = plat;
@@ -49,10 +53,10 @@ export function usePlatformStore() {
 
   return {
     currentPlat,
-    isMobile: computed(() => unref(currentPlat) === Platform.MOBILE),
-    isPc: computed(() => unref(currentPlat) === Platform.PC),
+    isMobile,
+    isPc,
 
     setCurrentPlat,
     mountPlatformListener,
   };
-}
+});

@@ -1,9 +1,10 @@
 import { defineComponent, ref, computed, watch, unref } from 'vue';
-import { Button, Upload, Input, Slider, Select, Switch, message } from 'ant-design-vue';
-import { InboxOutlined, LeftOutlined, RightOutlined, ToTopOutlined, UploadOutlined } from '@ant-design/icons-vue';
+import { Button, Upload, Input, Slider, Select, Switch, Drawer, message } from 'ant-design-vue';
+import { CloseOutlined, InboxOutlined, LeftOutlined, RightOutlined, SettingOutlined, ToTopOutlined, UploadOutlined } from '@ant-design/icons-vue';
 import { useWatermark, type WatermarkConfig } from './hooks/useWatermark';
 import { BEM } from '@/utils/common';
 import ExportModal from './components/export-modal';
+import { usePlatformStore } from '@/store';
 
 import './index.scss';
 
@@ -18,6 +19,8 @@ export default defineComponent({
     const canvasRef = ref<HTMLCanvasElement | null>(null);
     const canvasWrapperRef = ref<HTMLDivElement | null>(null);
     const isExportModalVisible = ref(false);
+    const isParamDrawerVisible = ref(false);
+    const platformStore = usePlatformStore();
 
     const config = ref<WatermarkConfig>({
       text: '水印文字',
@@ -51,6 +54,15 @@ export default defineComponent({
         img.src = currentImageUrl.value;
       }
     });
+
+    // onBeforeMount(() => {
+    //   unmountPlatformListener = mountPlatformListener();
+    // });
+
+    // onBeforeUnmount(() => {
+    //   unmountPlatformListener?.();
+    //   unmountPlatformListener = null;
+    // });
 
     function beforeUpload(file: File) {
       handleUpload({ file });
@@ -122,6 +134,8 @@ export default defineComponent({
     return render;
 
     function render() {
+      const mobile = unref(platformStore.isMobile);
+
       return (
         <div class={ns.b()}>
           <header class={ns.e('header')}>
@@ -168,70 +182,174 @@ export default defineComponent({
               )}
             </section>
 
-            <aside class={ns.e('sider')}>
-              <div class={ns.e('sider-section')}>
-                <div class={ns.e('sider-section-title')}>
-                  <span>上传列表 ({fileList.value.length}/{MAX_UPLOAD_FILES})</span>
+            {mobile ? (
+              <>
+                {fileList.value.length > 0 && (
+                  <div class={ns.e('thumbnails')}>
+                    <Upload
+                      class={ns.e('thumbnails-upload')}
+                      fileList={fileList.value}
+                      accept="image/*"
+                      beforeUpload={beforeUpload}
+                      showUploadList={false}
+                      multiple
+                    >
+                      <div class={[ns.e('thumbnail'), ns.em('thumbnail', 'upload')]}>
+                        <UploadOutlined />
+                        <div>上传</div>
+                      </div>
+                    </Upload>
+                    {fileList.value.map((item, index) => {
+                      const isActive = index === unref(currentIndex);
+                      return (
+                        <div
+                          key={item.uid ?? index}
+                          class={[
+                            ns.e('thumbnail'),
+                            isActive ? ns.em('thumbnail', 'active') : '',
+                          ]}
+                          role="button"
+                          tabindex={0}
+                          onClick={() => (currentIndex.value = index)}
+                        >
+                          <img class={ns.e('thumbnail-img')} src={item.url} alt={item.name || `图片${index + 1}`} />
+                          <Button
+                            class={ns.e('thumbnail-remove')}
+                            type="text"
+                            size="small"
+                            aria-label="移除图片"
+                            icon={<CloseOutlined />}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              removeFile(item.uid);
+                            }}
+                          />
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
+
+                <div class={ns.e('actionbar')}>
+                  <Button icon={<SettingOutlined />} onClick={() => (isParamDrawerVisible.value = true)}>
+                    参数
+                  </Button>
+                </div>
+
+                <Drawer
+                  class={ns.e('param-drawer')}
+                  placement="bottom"
+                  height="60vh"
+                  open={isParamDrawerVisible.value}
+                  title="参数"
+                  onUpdate:open={(value: boolean) => (isParamDrawerVisible.value = value)}
+                >
+                  <div class={ns.e('drawer-section')}>
+                    <div class={ns.e('drawer-section-title')}>水印内容</div>
+                    <Input v-model={[config.value.text, 'value']} placeholder="请输入水印文字" />
+                  </div>
+
+                  <div class={ns.e('drawer-section')}>
+                    <div class={ns.e('drawer-section-title')}>布局调节</div>
+                    <p>间距</p>
+                    <Slider v-model={[config.value.gap, 'value']} min={20} max={300} />
+                    <p>角度</p>
+                    <Slider v-model={[config.value.angle, 'value']} min={0} max={360} />
+                  </div>
+
+                  <div class={ns.e('drawer-section')}>
+                    <div class={ns.e('drawer-section-title')}>样式调节</div>
+                    <p>字体</p>
+                    <Select v-model={[config.value.fontFamily, 'value']} style={{ width: '100%' }}>
+                      <Select.Option value="Microsoft YaHei">微软雅黑</Select.Option>
+                      <Select.Option value="SimSun">宋体</Select.Option>
+                      <Select.Option value="SimHei">黑体</Select.Option>
+                      <Select.Option value="Arial">Arial</Select.Option>
+                      <Select.Option value="Times New Roman">Times New Roman</Select.Option>
+                    </Select>
+                    <p style={{ marginTop: '12px' }}>大小</p>
+                    <Slider v-model={[config.value.fontSize, 'value']} min={12} max={100} />
+                    <p>颜色与透明度</p>
+                    <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                      <input type="color" v-model={config.value.color} style={{ width: '40px', height: '32px', padding: '0', border: '1px solid #d9d9d9', borderRadius: '4px' }} />
+                      <Slider v-model={[config.value.opacity, 'value']} min={0} max={100} style={{ flex: 1 }} />
+                    </div>
+                    <p style={{ marginTop: '12px' }}>粗细</p>
+                    <Switch
+                      checked={config.value.fontWeight === 'bold'}
+                      onChange={(checked) => (config.value.fontWeight = checked ? 'bold' : 'normal')}
+                      checkedChildren="加粗"
+                      unCheckedChildren="常规"
+                    />
+                  </div>
+                </Drawer>
+              </>
+            ) : (
+              <aside class={ns.e('sider')}>
+                <div class={ns.e('sider-section')}>
+                  <div class={ns.e('sider-section-title')}>
+                    <span>上传列表 ({fileList.value.length}/{MAX_UPLOAD_FILES})</span>
+                    <Upload
+                      class={ns.e('sider-upload')}
+                      fileList={fileList.value}
+                      accept="image/*"
+                      beforeUpload={beforeUpload}
+                      showUploadList={false}
+                    >
+                      <Button size='small' icon={<UploadOutlined />}>
+                        上传
+                      </Button>
+                    </Upload>
+                  </div>
                   <Upload
-                    class={ns.e('sider-upload')}
                     fileList={fileList.value}
+                    listType="picture"
+                    onRemove={(file) => removeFile(file.uid)}
                     accept="image/*"
-                    beforeUpload={beforeUpload}
-                    showUploadList={false}
-                  >
-                    <Button size='small' icon={<UploadOutlined />}>
-                      上传
-                    </Button>
-                  </Upload>
+                    beforeUpload={() => false}
+                  />
                 </div>
-                <Upload
-                  fileList={fileList.value}
-                  listType="picture"
-                  onRemove={(file) => removeFile(file.uid)}
-                  accept="image/*"
-                  beforeUpload={() => false}
-                />
-              </div>
 
-              <div class={ns.e('sider-section')}>
-                <div class={ns.e('sider-section-title')}>水印内容</div>
-                <Input v-model={[config.value.text, 'value']} placeholder="请输入水印文字" />
-              </div>
-
-              <div class={ns.e('sider-section')}>
-                <div class={ns.e('sider-section-title')}>布局调节</div>
-                <p>间距</p>
-                <Slider v-model={[config.value.gap, 'value']} min={20} max={300} />
-                <p>角度</p>
-                <Slider v-model={[config.value.angle, 'value']} min={0} max={360} />
-              </div>
-
-              <div class={ns.e('sider-section')}>
-                <div class={ns.e('sider-section-title')}>样式调节</div>
-                <p>字体</p>
-                <Select v-model={[config.value.fontFamily, 'value']} style={{ width: '100%' }}>
-                  <Select.Option value="Microsoft YaHei">微软雅黑</Select.Option>
-                  <Select.Option value="SimSun">宋体</Select.Option>
-                  <Select.Option value="SimHei">黑体</Select.Option>
-                  <Select.Option value="Arial">Arial</Select.Option>
-                  <Select.Option value="Times New Roman">Times New Roman</Select.Option>
-                </Select>
-                <p style={{ marginTop: '12px' }}>大小</p>
-                <Slider v-model={[config.value.fontSize, 'value']} min={12} max={100} />
-                <p>颜色与透明度</p>
-                <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
-                  <input type="color" v-model={config.value.color} style={{ width: '40px', height: '32px', padding: '0', border: '1px solid #d9d9d9', borderRadius: '4px' }} />
-                  <Slider v-model={[config.value.opacity, 'value']} min={0} max={100} style={{ flex: 1 }} />
+                <div class={ns.e('sider-section')}>
+                  <div class={ns.e('sider-section-title')}>水印内容</div>
+                  <Input v-model={[config.value.text, 'value']} placeholder="请输入水印文字" />
                 </div>
-                <p style={{ marginTop: '12px' }}>粗细</p>
-                <Switch
-                  checked={config.value.fontWeight === 'bold'}
-                  onChange={(checked) => config.value.fontWeight = checked ? 'bold' : 'normal'}
-                  checkedChildren="加粗"
-                  unCheckedChildren="常规"
-                />
-              </div>
-            </aside>
+
+                <div class={ns.e('sider-section')}>
+                  <div class={ns.e('sider-section-title')}>布局调节</div>
+                  <p>间距</p>
+                  <Slider v-model={[config.value.gap, 'value']} min={20} max={300} />
+                  <p>角度</p>
+                  <Slider v-model={[config.value.angle, 'value']} min={0} max={360} />
+                </div>
+
+                <div class={ns.e('sider-section')}>
+                  <div class={ns.e('sider-section-title')}>样式调节</div>
+                  <p>字体</p>
+                  <Select v-model={[config.value.fontFamily, 'value']} style={{ width: '100%' }}>
+                    <Select.Option value="Microsoft YaHei">微软雅黑</Select.Option>
+                    <Select.Option value="SimSun">宋体</Select.Option>
+                    <Select.Option value="SimHei">黑体</Select.Option>
+                    <Select.Option value="Arial">Arial</Select.Option>
+                    <Select.Option value="Times New Roman">Times New Roman</Select.Option>
+                  </Select>
+                  <p style={{ marginTop: '12px' }}>大小</p>
+                  <Slider v-model={[config.value.fontSize, 'value']} min={12} max={100} />
+                  <p>颜色与透明度</p>
+                  <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                    <input type="color" v-model={config.value.color} style={{ width: '40px', height: '32px', padding: '0', border: '1px solid #d9d9d9', borderRadius: '4px' }} />
+                    <Slider v-model={[config.value.opacity, 'value']} min={0} max={100} style={{ flex: 1 }} />
+                  </div>
+                  <p style={{ marginTop: '12px' }}>粗细</p>
+                  <Switch
+                    checked={config.value.fontWeight === 'bold'}
+                    onChange={(checked) => (config.value.fontWeight = checked ? 'bold' : 'normal')}
+                    checkedChildren="加粗"
+                    unCheckedChildren="常规"
+                  />
+                </div>
+              </aside>
+            )}
           </main>
 
           <ExportModal

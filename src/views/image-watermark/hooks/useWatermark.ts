@@ -22,7 +22,7 @@ export function useWatermark(
   config: Ref<WatermarkConfig>,
 ) {
   const originalImage = new Image();
-  const { version } = useViewportStore();
+  const viewportStore = useViewportStore();
 
   let renderToken = 0;
 
@@ -138,9 +138,6 @@ export function useWatermark(
     }
 
     ctx.restore();
-
-    // 更新显示尺寸：保证在父容器可视区域内等比完整展示（允许放大）
-    // updateCanvasDisplaySize(canvas);
   }
 
   watch(
@@ -151,9 +148,12 @@ export function useWatermark(
     { deep: true },
   );
 
-  watch(version, () => {
-    render();
-  });
+  watch(
+    () => viewportStore.version,
+    () => {
+      render();
+    },
+  );
 
   /** 初始化渲染，imageUrl变化但是canvas dom还未就位 */
   watch(canvasRef, (val) => {

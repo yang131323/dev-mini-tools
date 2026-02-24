@@ -24,10 +24,10 @@ const App = defineComponent({
     const selectItem = ref<MenuInfo["key"][]>([RouteName.COLOR_PAGE]);
     const router = useRouter();
     const route = useRoute();
-    const { currentPlat, mountPlatformListener } = usePlatformStore();
-    const { mountViewportListener } = useViewportStore();
+    const platformStore = usePlatformStore();
+    const viewportStore = useViewportStore();
     const platformClass = computed(() => {
-      return currentPlat.value === Platform.MOBILE ? "mobile-platform" : "pc-platform";
+      return platformStore.currentPlat === Platform.MOBILE ? "mobile-platform" : "pc-platform";
     });
 
     let unmountListener: (() => void) | null = null;
@@ -48,8 +48,8 @@ const App = defineComponent({
     }
 
     onBeforeMount(async () => {
-      unmountListener = mountPlatformListener();
-      unmountViewportListener = mountViewportListener();
+      unmountListener = platformStore.mountPlatformListener();
+      unmountViewportListener = viewportStore.mountViewportListener();
       await router.isReady();
       const routeName = route.name as MenuInfo["key"];
       if (routeName) selectItem.value = [routeName];

@@ -47,6 +47,7 @@
     "@isq/storage": "^1.0.3",
     "ant-design-vue": "4.2.6",
     "lodash-es": "^4.17.23",
+    "pinia": "^3.0.4",
     "terser": "^5.46.0",
     "vue": "^3.5.12",
     "vue-router": "^4.4.5"
