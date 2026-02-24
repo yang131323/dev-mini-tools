@@ -20,7 +20,7 @@ const BaseFooter = defineComponent({
         <footer class="base-footer">
           <ul class="site-infos">
             <li class="info-item outer-link">
-              <a href={aboutRoute} target="_blank">关于前端开发工具</a>
+              <a href={aboutRoute} target="_blank">关于Web效率工具</a>
             </li>
             <li class="info-item outer-link">
               <a href="https://github.com/yang131323/dev-mini-tools" target="_blank">Github</a>

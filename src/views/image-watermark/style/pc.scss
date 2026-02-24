@@ -1,0 +1,21 @@
+// ImageWatermark PC 端独有样式（目前暂无）
+@use "@/style/var.scss" as *;
+@use "@/style/mixin.scss" as *;
+
+.pc-platform {
+  .image-watermark {
+    &__preview {
+      @include flex-align-center;
+      justify-content: center;
+      padding: 24px;
+      max-height: 100%;
+      max-width: calc(100% - 320px);
+      overflow: hidden;
+
+      &-canvas-wrapper {
+        overflow: auto;
+        width: 100%;
+      }
+    }
+  }
+}

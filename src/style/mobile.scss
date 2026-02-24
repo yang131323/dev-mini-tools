@@ -1,0 +1,8 @@
+/* Mobile 端样式覆盖（< 768px） */
+
+@use "@/components/app/style/mobile.scss" as appMobile;
+@use "@/components/footer/style/mobile.scss" as footerMobile;
+
+@use "@/views/color/style/mobile.scss" as colorMobile;
+@use "@/views/about/style/mobile.scss" as aboutMobile;
+@use "@/views/image-watermark/style/mobile.scss" as watermarkMobile;

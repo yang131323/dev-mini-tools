@@ -5,6 +5,7 @@ import vueJsx from '@vitejs/plugin-vue-jsx'
 import checker from "vite-plugin-checker";
 import path from "node:path";
 import url from "node:url";
+import mediaStylePlugin, { VIRTUAL_PC, VIRTUAL_MOBILE } from "./tools/plugins/build-style";
 
 const dirname = path.dirname(url.fileURLToPath(import.meta.url));
 
@@ -32,7 +33,7 @@ function getBaseConfig() {
         "@key": path.resolve(dirname, "src/keys"),
       }
     },
-    plugins: [vueJsx()],
+    plugins: [vueJsx(), mediaStylePlugin()],
   };
 
   return baseConf;
@@ -75,6 +76,13 @@ function getProdConfig() {
       outDir: 'site',
       sourcemap: true,
       minify: "terser",
+      rollupOptions: {
+        input: {
+          app: path.resolve(dirname, "index.html"),
+          'style_pc': VIRTUAL_PC,
+          'style_mobile': VIRTUAL_MOBILE,
+        },
+      },
       terserOptions: {
         sourceMap: true,
         compress: {

@@ -9,17 +9,24 @@ $footerPadding: 8px;
   bottom: 0;
   left: 0;
   right: 0;
+  z-index: 1000;
+  height: $pageFooterHeight;
   background-color: #fff;
   box-shadow: 0 -4px 5px -4px rgba(0, 0, 0, 0.04);
-  padding: $commonPadding;
   align-items: center;
   color: $infoColor;
-  
+  justify-content: center;
   @include flex-column;
 
   .site-infos {
-    margin-bottom: 6px;
+    // margin-bottom: 6px;
     @include flex-align-center;
+  }
+
+  .right-info {
+    margin-top: 6px;
+    font-size: 12px;
+    line-height: 1;
   }
 
   .info-item {
@@ -31,25 +38,20 @@ $footerPadding: 8px;
   .info-item a {
     color: $infoColor;
     text-decoration: none;
+    white-space: nowrap;
   }
 
   .outer-link {
     cursor: pointer;
   }
 
-  .info-item a:hover, .info-item:hover {
+  .info-item a:hover,
+  .info-item:hover {
     color: $activeColor;
   }
 
   .info-item:nth-last-child(n + 2) {
     padding-right: $footerPadding;
     border-right: 1px solid $borderColor;
-  }
-}
-
-@media screen and (min-height: 1440px) {
-  .base-footer {
-    position: relative;
-    margin-top: 80px;
   }
 }

@@ -1,4 +1,9 @@
-import { toHex, digitalDecimal, numToPercentage, percentageStrToNum } from "./num";
+import {
+  toHex,
+  digitalDecimal,
+  numToPercentage,
+  percentageStrToNum,
+} from "./num";
 import { isNull } from "./type";
 
 export enum ColorFormat {
@@ -34,11 +39,24 @@ export interface ColorObj {
   hsla?: string;
 }
 
+function isHexColor(str: string) {
+  return /[0-9a-fA-F]{6}/g.test(str) && str.length === 6;
+}
+
 function isHslColor(arr: string[]) {
   const [h, s, l] = arr;
-  const isHue = h.endsWith("deg") || h.endsWith("grad") || h.endsWith("rad") || h.endsWith("turn");
+  const isHue =
+    h.endsWith("deg") ||
+    h.endsWith("grad") ||
+    h.endsWith("rad") ||
+    h.endsWith("turn");
 
-  return isHue || s.endsWith("%") || l.endsWith("%") || (s.includes(".") && l.includes("."));
+  return (
+    isHue ||
+    s.endsWith("%") ||
+    l.endsWith("%") ||
+    (s.includes(".") && l.includes("."))
+  );
 }
 
 const rgbReg = /,\s*|\s+/g;
@@ -63,7 +81,7 @@ export function getColorFormat(str: string) {
 }
 
 export function parseColor(str: string) {
-  if (str.startsWith("#")) {
+  if (isHexColor(str)) {
     return parseHexColor(str);
   } else if (str.startsWith("rgb")) {
     return parseRgbaColor(str);
@@ -75,7 +93,8 @@ export function parseColor(str: string) {
 }
 
 export function parseHexColor(str: string): RGBColor {
-  const hex = str.slice(1);
+  const start = str.startsWith("#") ? 1 : 0;
+  const hex = str.slice(start);
   const r = parseInt(hex.slice(0, 2), 16);
   const g = parseInt(hex.slice(2, 4), 16);
   const b = parseInt(hex.slice(4, 6), 16);
@@ -94,7 +113,7 @@ export function parseStrColor(str: string) {
   } else {
     color = parseRgbaColor(str);
   }
-  
+
   if (len === 3) delete color.a;
 
   return color;
@@ -114,7 +133,7 @@ export function parseRgbaColor(str: string): RGBColor {
 
 export function parseHslColor(str: string): HSLColor {
   const colorStr = str.replace(/hsla?\(/, "").replace(")", "");
-  const arr = colorStr.split('/');
+  const arr = colorStr.split("/");
   let a = arr[1] ?? "1";
   const [h, s, l, _a] = colorStr.split(rgbReg);
 
@@ -135,7 +154,7 @@ export function parseHue(hue: string) {
   } else if (hue.endsWith("grad")) {
     return parseFloat(hue.replace("grad", "")) * 0.9;
   } else if (hue.endsWith("rad")) {
-    return parseFloat(hue.replace("rad", "")) * 180 / Math.PI;
+    return (parseFloat(hue.replace("rad", "")) * 180) / Math.PI;
   } else if (hue.endsWith("turn")) {
     return parseFloat(hue.replace("turn", "")) * 360;
   } else {
@@ -143,7 +162,10 @@ export function parseHue(hue: string) {
   }
 }
 
-export function getColorResult(color: RGBColor | HSLColor, decimal: number): ColorObj {
+export function getColorResult(
+  color: RGBColor | HSLColor,
+  decimal: number,
+): ColorObj {
   if ("r" in color) {
     const hsl = rgbToHslValues(color, decimal);
 
@@ -175,7 +197,7 @@ export function rgbToHex(color: RGBColor) {
 export function rgbToString(color: RGBColor, hasAlpha = false) {
   const { r, g, b, a } = color;
   const colors = [r, g, b];
-  
+
   if (hasAlpha) {
     colors.push(a ?? 1);
     return `rgba(${colors.join(", ")})`;
@@ -187,7 +209,7 @@ export function rgbToString(color: RGBColor, hasAlpha = false) {
 // export function rgbToHsl(color: RGBColor, hasAlpha = false) {
 //   // const { a } = color;
 //   const hsl = rgbToHslValues(color);
-  
+
 //   // if (hasAlpha) hsl.a = a ?? 1;
 
 //   return hslToString(hsl, hasAlpha);
@@ -232,7 +254,7 @@ export function rgbToHslValues(color: RGBColor, decimal: number): HSLColor {
     h: digitalDecimal(h * 360, decimal),
     s: digitalDecimal(s * 100, decimal),
     l: digitalDecimal(l * 100, decimal),
-    a
+    a,
   };
 }
 
@@ -267,7 +289,7 @@ export function hslToRgb(color: HSLColor, decimal: number): RGBColor {
     r: digitalDecimal(r * 255, decimal),
     g: digitalDecimal(g * 255, decimal),
     b: digitalDecimal(b * 255, decimal),
-    a
+    a,
   };
 }
 
@@ -279,7 +301,7 @@ export function hueToRgb(p: number, q: number, t: number) {
   if (t > 1) t -= 1;
   if (t < 1 / 6) return p + (q - p) * 6 * t;
   if (t < 1 / 2) return q;
-  if (t < 2 / 3) return p + (q - p) * ( 2 / 3 - t ) * 6;
+  if (t < 2 / 3) return p + (q - p) * (2 / 3 - t) * 6;
 
   return p;
 }

@@ -8,9 +8,9 @@ import { ColorBlock } from "@components/index";
 import { CopyOutlined, CaretRightOutlined, QuestionCircleFilled } from "@ant-design/icons-vue";
 import { copyText } from "@/utils/common";
 import { Storage } from "@isq/storage";
+import { COLOR_SETTING } from "@/constants/key";
 
 import "./index.scss";
-import { COLOR_SETTING } from "@/constants/key";
 
 type ColorItem = BaseOption<ColorType | null>;
 
@@ -37,34 +37,12 @@ function createItem(key: string, label: string) {
   };
 }
 
-function getColors(color: ColorItem, decimal = 2) {
-  const { label, value } = color;
-  const list: BaseOption[]  = [];
-  if (!value) return [];
-  const colorItems = colorSort.filter((item) => item.key !== label);
-  const rgbObj = getColorResult(value, decimal)
-
-  for (const item of colorItems) {
-    const key = item.key as keyof ColorObj;
-
-    if (rgbObj[key]) {
-      list.push({
-        label: key,
-        value: rgbObj[key],
-      });
-    }
-  }
-
-  return list;
-}
-
 const ColorPage = defineComponent({
   name: "ColorPage",
   setup() {
 
     const colorText = ref<string>("");
     const current = ref<ColorItem>({ label: "", value: null });
-    const result = ref<BaseOption[]>([]);
     const form = reactive({
       decimalNum: 2,
     });
@@ -75,8 +53,33 @@ const ColorPage = defineComponent({
       return colorToString(unref(current).value!);
     })
 
+    const result = computed(() => {
+      const { label, value } = unref(current);
+      const colorItems = colorSort.filter((item) => item.key !== label);
+      const rgbObj = value ? getColorResult(value, form.decimalNum) : null
+      const list: BaseOption[] = [];
+
+      for (const item of colorItems) {
+        const key = item.key as keyof ColorObj;
+
+        if (value && rgbObj?.[key]) {
+          list.push({
+            label: key,
+            value: rgbObj[key],
+          });
+        } else {
+          list.push({
+            label: key,
+            value: "",
+          });
+        }
+      }
+
+      return list;
+    })
+
     function handleBlur() {
-      const color = unref(colorText);
+      const color = unref(colorText).trim();
       if (!color) {
         current.value = { label: "", value: null };
         return;
@@ -91,7 +94,7 @@ const ColorPage = defineComponent({
         label: format,
         value: colorStr,
       };
-      result.value = getColors(unref(current), form.decimalNum);
+      // result.value = getColors(unref(current), form.decimalNum);
     }
 
     function handleSettingChange() {
@@ -128,11 +131,11 @@ const ColorPage = defineComponent({
 
     function renderSettings() {
       return (
-        <CollapsePanel class="settings" key="setting" header="颜色转换相关设置（精确度）">
+        <CollapsePanel class="settings" key="setting" header="相关设置">
           <Form layout="inline" model={form} class="setting-form">
             <FormItem label="精确度" name="decimalNum" class="form-item">
               <div class="tip-wrapper">
-                <Tooltip placement="right" title="rgb和hsl相互转换是经过数学计算得出，可能会有精度问题，该值控制转换后保留的小数位数，采用四舍五入的方式保留小数位数">
+                <Tooltip placement="right" title="rgb和hsl相互转换是经过数学计算得出，可能会出现多位小数，该值控制转换后保留的小数位数，采用四舍五入的方式保留小数位，默认保留2位小数">
                   {{
                     default: () => <QuestionCircleFilled class="question-icon" />,
                   }}
@@ -160,7 +163,7 @@ const ColorPage = defineComponent({
 
     function renderColorPanel() {
       return (
-        <div class="color-block">
+        <div class="color-block-panel">
           <h3 class="block-title">格式化颜色</h3>
           <Textarea v-model:value={colorText.value} placeholder="请输入颜色" onBlur={handleBlur}></Textarea>
           <div class="split-line"></div>
