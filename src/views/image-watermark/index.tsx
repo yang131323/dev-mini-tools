@@ -42,7 +42,7 @@ export default defineComponent({
 
     const currentImageUrl = computed(() => fileList.value[unref(currentIndex)]?.url);
 
-    useWatermark(canvasRef, canvasWrapperRef, currentImageUrl, config);
+    const { exportImage } = useWatermark(canvasRef, canvasWrapperRef, currentImageUrl, config);
 
     watch(currentImageUrl, () => {
       if (currentImageUrl.value) {
@@ -51,18 +51,9 @@ export default defineComponent({
           exportConfig.value.width = img.width;
           exportConfig.value.height = img.height;
         };
-        img.src = currentImageUrl.value;
+        img.src = unref(currentImageUrl);
       }
     });
-
-    // onBeforeMount(() => {
-    //   unmountPlatformListener = mountPlatformListener();
-    // });
-
-    // onBeforeUnmount(() => {
-    //   unmountPlatformListener?.();
-    //   unmountPlatformListener = null;
-    // });
 
     function beforeUpload(file: File) {
       handleUpload({ file });
@@ -70,36 +61,7 @@ export default defineComponent({
     }
 
     function handleExport() {
-      const canvas = canvasRef.value;
-      if (!canvas) return;
-
-      let finalCanvas = canvas;
-      const { width, height } = unref(exportConfig);
-      if (width !== canvas.width || height !== canvas.height) {
-        const offscreenCanvas = document.createElement('canvas');
-        offscreenCanvas.width = width;
-        offscreenCanvas.height = height;
-        const octx = offscreenCanvas.getContext('2d');
-        if (octx) {
-          // CHECK: 这里有问题，会丢失清晰度
-          octx.drawImage(canvas, 0, 0, width, height);
-          finalCanvas = offscreenCanvas;
-        }
-      }
-
-      try {
-        const dataUrl = finalCanvas.toDataURL(exportConfig.value.format, exportConfig.value.quality / 100);
-        const link = document.createElement('a');
-        const extension = exportConfig.value.format.split('/')[1];
-        link.download = `watermark_${Date.now()}.${extension}`;
-        link.href = dataUrl;
-        link.click();
-        isExportModalVisible.value = false;
-        message.success('导出成功');
-      } catch (err) {
-        console.error(err);
-        message.error('导出失败，请重试');
-      }
+      exportImage(unref(exportConfig));
     }
 
     function handleUpload(info: any) {
@@ -352,11 +314,11 @@ export default defineComponent({
           </main>
 
           <ExportModal
-            open={isExportModalVisible.value}
+            open={unref(isExportModalVisible)}
             onUpdate:open={(value: boolean) => (isExportModalVisible.value = value)}
-            config={config}
-            exportConfig={exportConfig}
-            canvasRef={canvasRef}
+            config={unref(config)}
+            exportConfig={unref(exportConfig)}
+            canvasRef={unref(canvasRef)}
             onUpdate:height={(value: number) => exportConfig.value.height = value}
             onUpdate:width={(value: number) => exportConfig.value.width = value}
             onExport={handleExport}

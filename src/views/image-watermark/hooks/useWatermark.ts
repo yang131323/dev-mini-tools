@@ -3,6 +3,8 @@ import type { Ref } from "vue";
 import { unref, watch } from "vue";
 import { useViewportStore } from "@/store";
 import { numToPixel } from "@/utils/pixel";
+import { downloadDataUrl } from "@/utils/download";
+import { message } from "ant-design-vue";
 
 export interface WatermarkConfig {
   text: string;
@@ -13,6 +15,13 @@ export interface WatermarkConfig {
   opacity: number;
   gap: number;
   angle: number;
+}
+
+export interface ExportConfig {
+  format: string;
+  quality: number;
+  width: number;
+  height: number;
 }
 
 export function useWatermark(
@@ -26,7 +35,18 @@ export function useWatermark(
 
   let renderToken = 0;
 
-  function updateCanvasDisplaySize(canvas: HTMLCanvasElement) {
+  function setCanvasSize(
+    canvas: HTMLCanvasElement,
+    width: number,
+    height: number,
+  ) {
+    canvas.style.width = numToPixel(width);
+    canvas.style.height = numToPixel(height);
+    canvas.width = width;
+    canvas.height = height;
+  }
+
+  function calcCanvasDisplaySize() {
     const wrapper = unref(wrapperRef);
     const rect = {
       dw: 1,
@@ -46,15 +66,94 @@ export function useWatermark(
     const dw = Math.max(1, Math.floor(iw * scale));
     const dh = Math.max(1, Math.floor(ih * scale));
 
-    canvas.style.width = numToPixel(dw);
-    canvas.style.height = numToPixel(dh);
-    canvas.width = dw;
-    canvas.height = dh;
-
     rect.dw = dw;
     rect.dh = dh;
 
     return rect;
+  }
+
+  /** 配置画笔样式 */
+  function setCtxStyle(ctx: CanvasRenderingContext2D) {
+    const { fontSize, fontWeight, fontFamily, color, opacity } = unref(config);
+
+    ctx.font = `${fontWeight} ${fontSize}px ${fontFamily}`;
+    ctx.fillStyle = color;
+    ctx.globalAlpha = opacity / 100;
+    ctx.textBaseline = "middle";
+    ctx.textAlign = "center";
+  }
+
+  function measureText(ctx: CanvasRenderingContext2D) {
+    const { text, fontSize } = unref(config);
+    const metrics = ctx.measureText(text);
+    const textWidth = metrics.width;
+    const textHeight = fontSize;
+
+    return {
+      textWidth,
+      textHeight,
+    };
+  }
+
+  function drawWatermark(
+    ctx: CanvasRenderingContext2D,
+    canvasWidth: number,
+    canvasHeight: number,
+  ) {
+    const { gap, angle, text } = unref(config);
+    const canvasHalfWidth = canvasWidth / 2;
+    const canvasHalfHeight = canvasHeight / 2;
+    // 1. 测量文本大小以确定网格步长
+    const { textWidth, textHeight } = measureText(ctx);
+
+    // 2. 计算网格步长 (文本大小 + 间距)
+    const stepX = textWidth + gap;
+    const stepY = textHeight + gap;
+
+    // 3. 为了覆盖旋转后的全图，我们需要扩大绘制范围
+    // 计算对角线长度，确保旋转时边缘不留白
+    const diagonal = Math.sqrt(canvasWidth ** 2 + canvasHeight ** 2);
+    const startX = (canvasWidth - diagonal) / 2;
+    const endX = (canvasWidth + diagonal) / 2;
+    const startY = (canvasHeight - diagonal) / 2;
+    const endY = (canvasHeight + diagonal) / 2;
+
+    const rad = (angle * Math.PI) / 180;
+
+    // 4. 双重循环绘制点阵
+    // 我们在图片中心进行旋转变换
+    ctx.save();
+    ctx.translate(canvasHalfWidth, canvasHalfHeight);
+    ctx.rotate(rad);
+    ctx.translate(-canvasHalfWidth, -canvasHalfHeight);
+
+    for (let x = startX; x < endX; x += stepX) {
+      for (let y = startY; y < endY; y += stepY) {
+        ctx.fillText(text, x, y);
+      }
+    }
+
+    ctx.restore();
+  }
+
+  function renderContent(
+    canvas: HTMLCanvasElement,
+    ctx: CanvasRenderingContext2D,
+    width: number,
+    height: number,
+  ) {
+    // 设置画布尺寸
+    setCanvasSize(canvas, width, height);
+
+    // 绘制图片
+    ctx.clearRect(0, 0, width, height);
+    ctx.drawImage(originalImage, 0, 0, width, height);
+
+    // 配置画笔样式
+    setCtxStyle(ctx);
+
+    // 绘制水印
+    drawWatermark(ctx, width, height);
   }
 
   async function render() {
@@ -78,66 +177,54 @@ export function useWatermark(
 
     if (token !== renderToken) return;
 
-    // 设置画布尺寸为原图尺寸
-    // canvas.width = originalImage.width;
-    // canvas.height = originalImage.height;
-    const { dw, dh } = updateCanvasDisplaySize(canvas);
+    // 进行等比例缩小获取canvas尺寸
+    const { dw, dh } = calcCanvasDisplaySize();
 
-    // 绘制原图
-    ctx.clearRect(0, 0, dw, dh);
-    ctx.drawImage(originalImage, 0, 0, dw, dh);
+    // // 设置画布尺寸
+    // setCanvasSize(canvas, dw, dh);
 
-    const {
-      text,
-      fontSize,
-      fontWeight,
-      fontFamily,
-      color,
-      opacity,
-      gap,
-      angle,
-    } = config.value;
+    // // 绘制图片
+    // ctx.clearRect(0, 0, dw, dh);
+    // ctx.drawImage(originalImage, 0, 0, dw, dh);
 
-    // 配置画笔样式
-    ctx.font = `${fontWeight} ${fontSize}px ${fontFamily}`;
-    ctx.fillStyle = color;
-    ctx.globalAlpha = opacity / 100;
-    ctx.textBaseline = "middle";
-    ctx.textAlign = "center";
+    // // 配置画笔样式
+    // setCtxStyle(ctx);
 
-    // 1. 测量文本大小以确定网格步长
-    const metrics = ctx.measureText(text);
-    const textWidth = metrics.width;
-    const textHeight = fontSize;
+    // // 绘制水印
+    // drawWatermark(ctx, dw, dh);
 
-    // 2. 计算网格步长 (文本大小 + 间距)
-    const stepX = textWidth + gap;
-    const stepY = textHeight + gap;
+    renderContent(canvas, ctx, dw, dh);
+  }
 
-    // 3. 为了覆盖旋转后的全图，我们需要扩大绘制范围
-    // 计算对角线长度，确保旋转时边缘不留白
-    const diagonal = Math.sqrt(canvas.width ** 2 + canvas.height ** 2);
-    const startX = (canvas.width - diagonal) / 2;
-    const endX = (canvas.width + diagonal) / 2;
-    const startY = (canvas.height - diagonal) / 2;
-    const endY = (canvas.height + diagonal) / 2;
+  async function exportImage(exportConfig: ExportConfig) {
+    if (!unref(canvasRef)) return;
+    const { width, height, format, quality } = exportConfig;
+    const canvas = unref(canvasRef);
+    if (!canvas) return;
 
-    const rad = (angle * Math.PI) / 180;
-
-    // 4. 双重循环绘制点阵
-    // 我们在图片中心进行旋转变换
-    ctx.save();
-    ctx.translate(canvas.width / 2, canvas.height / 2);
-    ctx.rotate(rad);
-    ctx.translate(-canvas.width / 2, -canvas.height / 2);
-
-    for (let x = startX; x < endX; x += stepX) {
-      for (let y = startY; y < endY; y += stepY) {
-        ctx.fillText(text, x, y);
-      }
+    let finalCanvas = canvas;
+    if (canvas.width !== width || canvas.height !== height) {
+      const offscreenCanvas = document.createElement("canvas");
+      offscreenCanvas.width = width;
+      offscreenCanvas.height = height;
+      const octx = offscreenCanvas.getContext("2d");
+      if (octx) renderContent(offscreenCanvas, octx, width, height);
+      finalCanvas = offscreenCanvas;
     }
 
-    ctx.restore();
+    try {
+      const fileLink = finalCanvas.toDataURL(format, quality / 100);
+      downloadDataUrl({
+        fileLink,
+        fileName: `watermark_${Date.now()}`,
+        mimeType: format,
+      });
+
+      message.success("导出成功");
+    } catch (err) {
+      console.error("export image failed: ", err);
+      message.error("导出失败，请重试");
+    }
   }
 
   watch(
@@ -162,5 +249,6 @@ export function useWatermark(
 
   return {
     render,
+    exportImage,
   };
 }
