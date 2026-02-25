@@ -117,7 +117,7 @@ export function useWatermark(
     // 3. 为了覆盖旋转后的全图，我们需要扩大绘制范围
     // 计算对角线长度，确保旋转时边缘不留白
     const diagonal = Math.sqrt(canvas.width ** 2 + canvas.height ** 2);
-    const startX = 0;
+    const startX = (canvas.width - diagonal) / 2;
     const endX = (canvas.width + diagonal) / 2;
     const startY = (canvas.height - diagonal) / 2;
     const endY = (canvas.height + diagonal) / 2;

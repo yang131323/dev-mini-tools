@@ -140,5 +140,15 @@
       margin-bottom: 12px;
       color: #333;
     }
+
+    &__mobile-upload {
+      font-size: 10px;
+    }
+  }
+}
+
+.image-watermark {
+  &__param-drawer {
+    user-select: none;
   }
 }

@@ -9,7 +9,7 @@ import { usePlatformStore } from '@/store';
 import './index.scss';
 
 const ns = new BEM('image-watermark');
-const MAX_UPLOAD_FILES = 5;
+const MAX_UPLOAD_FILES = 10;
 
 export default defineComponent({
   name: 'ImageWatermark',
@@ -24,12 +24,12 @@ export default defineComponent({
 
     const config = ref<WatermarkConfig>({
       text: '水印文字',
-      fontSize: 24,
+      fontSize: 20,
       fontWeight: 'normal',
       fontFamily: 'Microsoft YaHei',
       color: '#ff0000',
       opacity: 30,
-      gap: 40,
+      gap: 30,
       angle: 45
     });
 
@@ -196,7 +196,7 @@ export default defineComponent({
                     >
                       <div class={[ns.e('thumbnail'), ns.em('thumbnail', 'upload')]}>
                         <UploadOutlined />
-                        <div>上传</div>
+                        <div class={ns.e('mobile-upload')}>上传 {unref(fileList).length} / {MAX_UPLOAD_FILES}</div>
                       </div>
                     </Upload>
                     {fileList.value.map((item, index) => {
@@ -245,20 +245,19 @@ export default defineComponent({
                   onUpdate:open={(value: boolean) => (isParamDrawerVisible.value = value)}
                 >
                   <div class={ns.e('drawer-section')}>
-                    <div class={ns.e('drawer-section-title')}>水印内容</div>
+                    <h4 class={ns.e('drawer-section-title')}>水印内容</h4>
                     <Input v-model={[config.value.text, 'value']} placeholder="请输入水印文字" />
                   </div>
 
                   <div class={ns.e('drawer-section')}>
-                    <div class={ns.e('drawer-section-title')}>布局调节</div>
+                    <h4 class={ns.e('drawer-section-title')}>布局调节</h4>
                     <p>间距</p>
-                    <Slider v-model={[config.value.gap, 'value']} min={20} max={300} />
+                    <Slider v-model={[config.value.gap, 'value']} min={4} max={300} />
                     <p>角度</p>
                     <Slider v-model={[config.value.angle, 'value']} min={0} max={360} />
                   </div>
-
                   <div class={ns.e('drawer-section')}>
-                    <div class={ns.e('drawer-section-title')}>样式调节</div>
+                    <h4 class={ns.e('drawer-section-title')}>样式调节</h4>
                     <p>字体</p>
                     <Select v-model={[config.value.fontFamily, 'value']} style={{ width: '100%' }}>
                       <Select.Option value="Microsoft YaHei">微软雅黑</Select.Option>
@@ -268,7 +267,7 @@ export default defineComponent({
                       <Select.Option value="Times New Roman">Times New Roman</Select.Option>
                     </Select>
                     <p style={{ marginTop: '12px' }}>大小</p>
-                    <Slider v-model={[config.value.fontSize, 'value']} min={12} max={100} />
+                    <Slider v-model={[config.value.fontSize, 'value']} min={8} max={100} />
                     <p>颜色与透明度</p>
                     <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
                       <input type="color" v-model={config.value.color} style={{ width: '40px', height: '32px', padding: '0', border: '1px solid #d9d9d9', borderRadius: '4px' }} />
@@ -318,7 +317,7 @@ export default defineComponent({
                 <div class={ns.e('sider-section')}>
                   <div class={ns.e('sider-section-title')}>布局调节</div>
                   <p>间距</p>
-                  <Slider v-model={[config.value.gap, 'value']} min={20} max={300} />
+                  <Slider v-model={[config.value.gap, 'value']} min={4} max={300} />
                   <p>角度</p>
                   <Slider v-model={[config.value.angle, 'value']} min={0} max={360} />
                 </div>
@@ -334,7 +333,7 @@ export default defineComponent({
                     <Select.Option value="Times New Roman">Times New Roman</Select.Option>
                   </Select>
                   <p style={{ marginTop: '12px' }}>大小</p>
-                  <Slider v-model={[config.value.fontSize, 'value']} min={12} max={100} />
+                  <Slider v-model={[config.value.fontSize, 'value']} min={8} max={100} />
                   <p>颜色与透明度</p>
                   <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
                     <input type="color" v-model={config.value.color} style={{ width: '40px', height: '32px', padding: '0', border: '1px solid #d9d9d9', borderRadius: '4px' }} />
