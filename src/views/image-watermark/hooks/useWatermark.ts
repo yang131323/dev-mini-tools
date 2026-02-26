@@ -46,37 +46,33 @@ export function useWatermark(
     canvas.height = height;
   }
 
-  function calcCanvasDisplaySize() {
+  function calcScale() {
     const wrapper = unref(wrapperRef);
-    const rect = {
-      dw: 1,
-      dh: 1,
-    };
-    if (!wrapper) return rect;
+    if (!wrapper) return 1;
+    const { clientWidth: width, clientHeight: height } = wrapper;
+    const { width: imageWidth, height: imageHeight } = originalImage;
+    const scale = Math.min(width / imageWidth, height / imageHeight, 1);
+    return scale;
+  }
 
-    const cw = wrapper.clientWidth;
-    const ch = wrapper.clientHeight;
-    if (!cw || !ch) return rect;
-
+  function calcCanvasDisplaySize(scale: number) {
     const iw = originalImage.width;
     const ih = originalImage.height;
-    if (!iw || !ih) return rect;
-
-    const scale = Math.min(cw / iw, ch / ih, 1);
     const dw = Math.max(1, Math.floor(iw * scale));
     const dh = Math.max(1, Math.floor(ih * scale));
 
-    rect.dw = dw;
-    rect.dh = dh;
-
-    return rect;
+    return {
+      dh,
+      dw,
+    };
   }
 
   /** 配置画笔样式 */
-  function setCtxStyle(ctx: CanvasRenderingContext2D) {
+  function setCtxStyle(ctx: CanvasRenderingContext2D, scale: number) {
     const { fontSize, fontWeight, fontFamily, color, opacity } = unref(config);
+    const ceilFontSize = Math.ceil(fontSize * scale);
 
-    ctx.font = `${fontWeight} ${fontSize}px ${fontFamily}`;
+    ctx.font = `${fontWeight} ${numToPixel(ceilFontSize)} ${fontFamily}`;
     ctx.fillStyle = color;
     ctx.globalAlpha = opacity / 100;
     ctx.textBaseline = "middle";
@@ -141,6 +137,7 @@ export function useWatermark(
     ctx: CanvasRenderingContext2D,
     width: number,
     height: number,
+    scale = 1,
   ) {
     // 设置画布尺寸
     setCanvasSize(canvas, width, height);
@@ -150,7 +147,7 @@ export function useWatermark(
     ctx.drawImage(originalImage, 0, 0, width, height);
 
     // 配置画笔样式
-    setCtxStyle(ctx);
+    setCtxStyle(ctx, scale);
 
     // 绘制水印
     drawWatermark(ctx, width, height);
@@ -177,23 +174,12 @@ export function useWatermark(
 
     if (token !== renderToken) return;
 
-    // 进行等比例缩小获取canvas尺寸
-    const { dw, dh } = calcCanvasDisplaySize();
+    // 计算缩放比例
+    const scale = calcScale();
 
-    // // 设置画布尺寸
-    // setCanvasSize(canvas, dw, dh);
+    const { dw, dh } = calcCanvasDisplaySize(scale);
 
-    // // 绘制图片
-    // ctx.clearRect(0, 0, dw, dh);
-    // ctx.drawImage(originalImage, 0, 0, dw, dh);
-
-    // // 配置画笔样式
-    // setCtxStyle(ctx);
-
-    // // 绘制水印
-    // drawWatermark(ctx, dw, dh);
-
-    renderContent(canvas, ctx, dw, dh);
+    renderContent(canvas, ctx, dw, dh, scale);
   }
 
   async function exportImage(exportConfig: ExportConfig) {
