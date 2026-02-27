@@ -17,6 +17,13 @@ export interface WatermarkConfig {
   angle: number;
 }
 
+export interface FileItem {
+  uid: string;
+  name: string;
+  url: string;
+  originFile: File;
+}
+
 export interface ExportConfig {
   format: string;
   quality: number;
@@ -79,11 +86,11 @@ export function useWatermark(
     ctx.textAlign = "center";
   }
 
-  function measureText(ctx: CanvasRenderingContext2D) {
+  function measureText(ctx: CanvasRenderingContext2D, scale = 1) {
     const { text, fontSize } = unref(config);
     const metrics = ctx.measureText(text);
     const textWidth = metrics.width;
-    const textHeight = fontSize;
+    const textHeight = Math.ceil(fontSize * scale);
 
     return {
       textWidth,
@@ -95,12 +102,14 @@ export function useWatermark(
     ctx: CanvasRenderingContext2D,
     canvasWidth: number,
     canvasHeight: number,
+    scale: number,
   ) {
-    const { gap, angle, text } = unref(config);
+    const { gap: _gap, angle, text } = unref(config);
+    const gap = Math.ceil(_gap * scale);
     const canvasHalfWidth = canvasWidth / 2;
     const canvasHalfHeight = canvasHeight / 2;
     // 1. 测量文本大小以确定网格步长
-    const { textWidth, textHeight } = measureText(ctx);
+    const { textWidth, textHeight } = measureText(ctx, scale);
 
     // 2. 计算网格步长 (文本大小 + 间距)
     const stepX = textWidth + gap;
@@ -150,7 +159,7 @@ export function useWatermark(
     setCtxStyle(ctx, scale);
 
     // 绘制水印
-    drawWatermark(ctx, width, height);
+    drawWatermark(ctx, width, height, scale);
   }
 
   async function render() {
@@ -182,7 +191,7 @@ export function useWatermark(
     renderContent(canvas, ctx, dw, dh, scale);
   }
 
-  async function exportImage(exportConfig: ExportConfig) {
+  async function exportImage(exportConfig: ExportConfig, image: FileItem) {
     if (!unref(canvasRef)) return;
     const { width, height, format, quality } = exportConfig;
     const canvas = unref(canvasRef);
@@ -200,9 +209,10 @@ export function useWatermark(
 
     try {
       const fileLink = finalCanvas.toDataURL(format, quality / 100);
+      const baseName = image?.name ? image.name.replace(/\.[^/.]+$/, "") : `watermark_${Date.now()}`;
       downloadDataUrl({
         fileLink,
-        fileName: `watermark_${Date.now()}`,
+        fileName: baseName,
         mimeType: format,
       });
 

@@ -84,3 +84,7 @@ export function copyText(text: string) {
     });
   });
 }
+
+export function isIos() {
+  return /iphone|ipod|ipad/i.test(navigator.userAgent);
+}

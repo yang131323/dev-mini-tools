@@ -1,3 +1,5 @@
+import { isIos } from './common'
+
 export interface DownloadDataUrlOptions {
   fileLink: string;
   fileName: string;
@@ -37,7 +39,13 @@ export function downloadDataUrl(options: DownloadDataUrlOptions): void {
   link.href = fileLink;
   link.rel = "noopener";
 
-  // document.body.appendChild(link);
-  link.click();
-  // document.body.removeChild(link);
+  if (isIos()) {
+    const event = document.createEvent('MouseEvents');
+    event.initMouseEvent('click', true, false, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
+    link.dispatchEvent(event);
+  } else {
+    // document.body.appendChild(link);
+    link.click();
+    // document.body.removeChild(link);
+  }
 }

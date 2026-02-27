@@ -1,7 +1,9 @@
+import type { WatermarkConfig, FileItem } from './hooks/useWatermark';
+
 import { defineComponent, ref, computed, watch, unref } from 'vue';
 import { Button, Upload, Input, Slider, Select, Switch, Drawer, message } from 'ant-design-vue';
 import { CloseOutlined, InboxOutlined, LeftOutlined, RightOutlined, SettingOutlined, ToTopOutlined, UploadOutlined } from '@ant-design/icons-vue';
-import { useWatermark, type WatermarkConfig } from './hooks/useWatermark';
+import { useWatermark } from './hooks/useWatermark';
 import { BEM } from '@/utils/common';
 import ExportModal from './components/export-modal';
 import { usePlatformStore } from '@/store';
@@ -14,7 +16,7 @@ const MAX_UPLOAD_FILES = 10;
 export default defineComponent({
   name: 'ImageWatermark',
   setup() {
-    const fileList = ref<any[]>([]);
+    const fileList = ref<FileItem[]>([]);
     const currentIndex = ref(0);
     const canvasRef = ref<HTMLCanvasElement | null>(null);
     const canvasWrapperRef = ref<HTMLDivElement | null>(null);
@@ -40,12 +42,13 @@ export default defineComponent({
       height: 0
     });
 
-    const currentImageUrl = computed(() => fileList.value[unref(currentIndex)]?.url);
+    const currentImage = computed(() => unref(fileList)[unref(currentIndex)]);
+    const currentImageUrl = computed(() => unref(currentImage)?.url);
 
     const { exportImage } = useWatermark(canvasRef, canvasWrapperRef, currentImageUrl, config);
 
     watch(currentImageUrl, () => {
-      if (currentImageUrl.value) {
+      if (unref(currentImageUrl)) {
         const img = new Image();
         img.onload = () => {
           exportConfig.value.width = img.width;
@@ -61,18 +64,18 @@ export default defineComponent({
     }
 
     function handleExport() {
-      exportImage(unref(exportConfig));
+      exportImage(unref(exportConfig), unref(currentImage));
     }
 
     function handleUpload(info: any) {
       const { file } = info;
-      if (fileList.value.length >= MAX_UPLOAD_FILES) {
+      if (unref(fileList).length >= MAX_UPLOAD_FILES) {
         message.warning(`最多支持上传${MAX_UPLOAD_FILES}张图片`);
         return false;
       }
       const reader = new FileReader();
       reader.onload = (e) => {
-        fileList.value.push({
+        unref(fileList).push({
           uid: file.uid,
           name: file.name,
           url: e.target?.result as string,
@@ -84,11 +87,11 @@ export default defineComponent({
     }
 
     const removeFile = (uid: string) => {
-      const index = fileList.value.findIndex(item => item.uid === uid);
+      const index = unref(fileList).findIndex(item => item.uid === uid);
       if (index !== -1) {
-        fileList.value.splice(index, 1);
-        if (unref(currentIndex) >= fileList.value.length) {
-          currentIndex.value = Math.max(0, fileList.value.length - 1);
+        unref(fileList).splice(index, 1);
+        if (unref(currentIndex) >= unref(fileList).length) {
+          currentIndex.value = Math.max(0, unref(fileList).length - 1);
         }
       }
     };
