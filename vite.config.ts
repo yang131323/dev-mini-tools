@@ -9,7 +9,7 @@ import mediaStylePlugin, { VIRTUAL_PC, VIRTUAL_MOBILE } from "./tools/plugins/bu
 
 const dirname = path.dirname(url.fileURLToPath(import.meta.url));
 
-export default defineConfig(({ command } ) => {
+export default defineConfig(({ command }) => {
   const isDev = command === 'serve'
 
   if (isDev) {
@@ -47,7 +47,7 @@ function getDevConfig() {
   const devConf: UserConfig = {
     ...rest,
     server: {
-      port: 8080,
+      port: 9090,
       open: true,
       strictPort: true,
     },

@@ -1,0 +1,67 @@
+.json-parser {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    padding: 24px;
+    height: 100%;
+    box-sizing: border-box;
+
+    &__input-area {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    &__textarea {
+        font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+        font-size: 13px;
+    }
+
+    &__actions {
+        display: flex;
+        gap: 8px;
+    }
+
+    &__result-area {
+        flex: 1;
+        overflow: auto;
+        border: 1px solid #f0f0f0;
+        border-radius: 6px;
+        padding: 16px;
+        background: #fafafa;
+        min-height: 200px;
+    }
+
+    &__empty {
+        color: #bfbfbf;
+        text-align: center;
+        padding: 48px 0;
+        font-size: 14px;
+    }
+
+    &__top-error {
+        padding: 12px 16px;
+        background: #fff2f0;
+        border: 1px solid #ffccc7;
+        border-radius: 6px;
+        font-size: 13px;
+        line-height: 1.6;
+        word-break: break-all;
+    }
+
+    &__top-error-label {
+        font-weight: 600;
+        color: #cf1322;
+        margin-right: 4px;
+    }
+
+    &__top-error-message {
+        color: #cf1322;
+        font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+    }
+
+    &__error-value {
+        color: #cf1322;
+        font-style: italic;
+    }
+}

@@ -8,3 +8,4 @@ export const SVG_PAGE = "svgImage";
 
 export const ABOUT_PAGE = "about";
 export const WATERMARK_PAGE = "watermark";
+export const JSON_PARSER_PAGE = "jsonParser";

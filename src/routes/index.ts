@@ -33,6 +33,11 @@ const routes: RouteRecordRaw[] = [
     path: "/watermark",
     component: () => import("@/views/image-watermark"),
   },
+  {
+    name: ROUTE.JSON_PARSER_PAGE,
+    path: "/json-parser",
+    component: () => import("@/views/json-parser"),
+  },
   ...BaseRoutes,
 ];
 

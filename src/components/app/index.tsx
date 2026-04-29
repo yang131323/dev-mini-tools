@@ -37,6 +37,7 @@ const App = defineComponent({
       createItem(RouteName.COLOR_PAGE, "颜色/Color转换"),
       createItem(RouteName.IMAGE_PAGE, "图片转换"),
       createItem(RouteName.WATERMARK_PAGE, "图片水印"),
+      createItem(RouteName.JSON_PARSER_PAGE, "在线JSON解析"),
     ];
 
     function menuClickHandler({ key }: MenuInfo) {
